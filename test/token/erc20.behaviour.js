@@ -1,4 +1,5 @@
 const {expect} = require('chai')
+const { getTreasury } = require('../helpers/accounts')
 const {deployCrybToken} = require('../helpers/deployer')
 const {toBase} = require('../helpers/utils')
 
@@ -68,11 +69,15 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
             const amount = initialSupply
 
             it('transfers the requested amount', async () => {
+              // 5% will go to the treasury
               await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
 
               expect(await token.balanceOf(tokenOwner.address)).to.be.equal(0)
 
-              expect(await token.balanceOf(to.address)).to.be.equal(amount)
+              const treasury = await getTreasury()
+              expect(await token.balanceOf(spender.address)).to.be.equal(toBase('0'))
+              expect(await token.balanceOf(to.address)).to.be.equal(amount.sub(toBase('50000000')))
+              expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
             })
 
             it('decreases the spender allowance', async () => {
@@ -208,7 +213,10 @@ const shouldBehaveLikeERC20Transfer =  (errorPrefix, from, to, balance, transfer
 
         expect(await token.balanceOf(from.address)).to.be.equal(0)
 
-        expect(await token.balanceOf(to.address)).to.be.equal(amount)
+        const treasury = await getTreasury()
+        expect(await token.balanceOf(from.address)).to.be.equal(toBase('0'))
+        expect(await token.balanceOf(to.address)).to.be.equal(amount.sub(toBase('50000000')))
+        expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
       })
 
       it('emits a transfer event', async  () => {

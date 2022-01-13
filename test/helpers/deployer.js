@@ -5,7 +5,7 @@ const deployCrybToken = async () => {
   const treasury = await getTreasury()
   const CrybToken = await Contract('MockCrybToken')
   return await CrybToken.deploy(
-    5, // 5%
+    500, // 5%
     treasury.address
   )
 }
