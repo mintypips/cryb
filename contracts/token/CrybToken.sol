@@ -2,7 +2,7 @@
 pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./ERC20.sol";
 
 contract CrybToken is Ownable, ERC20 {
   uint256 constant private TAX_BASE = 10_000;
@@ -35,29 +35,37 @@ contract CrybToken is Ownable, ERC20 {
     treasury = _treasury;
   }
 
-  function include(address account) external onlyOwner {
-    isExluded[account] = false;
-  }
-
-  function exclude(address account) external onlyOwner {
-    isExluded[account] = true;
-  }
-
   function _transfer(
     address sender,
     address recipient,
     uint256 amount
   ) internal override {
+    require(sender != address(0), "ERC20: transfer from the zero address");
+    require(recipient != address(0), "ERC20: transfer to the zero address");
+
+    uint256 taxedAmount;
+    uint256 totalReceived;
+
     if(isExluded[sender]) {
       // send the full amount if sender is exlcuded
-      super._transfer(sender, recipient, amount);
+      totalReceived = amount;
     } else {
-      uint256 taxedAmount = (amount * tax) / TAX_BASE;
-      // send to treasury
-      super._transfer(sender, treasury, taxedAmount);
-      // send the remaining amount to the recipient
-      super._transfer(sender, recipient, amount - taxedAmount);
+      taxedAmount = (amount * tax) / TAX_BASE;
+      totalReceived = amount - taxedAmount;
     }
+
+    uint256 senderBalance = _balances[sender];
+    require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
+    unchecked {
+      _balances[sender] = senderBalance - amount;
+    }
+    _balances[recipient] += totalReceived;
+
+    if(taxedAmount > 0) {
+      _balances[treasury] += taxedAmount;
+    }
+
+    emit Transfer(sender, recipient, amount);
   }
 
   function tokenRescue(
