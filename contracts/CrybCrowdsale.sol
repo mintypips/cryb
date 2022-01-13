@@ -107,7 +107,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     require(success, "transfer failed");
   }
 
-  // allows user claim vested tokens
+  // allow users claim vested tokens
   function release() external {
     require(block.timestamp >= vestingState.startTime, "Vesting not started");
 
