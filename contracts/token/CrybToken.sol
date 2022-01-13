@@ -25,6 +25,10 @@ contract CrybToken is Ownable, ERC20 {
     setTreasury(_treasury);
   }
 
+  function decimals() public view virtual override returns (uint8) {
+    return 18;
+  }
+
   function setTax(uint256 _tax) public onlyOwner {
     emit TaxChanged(tax, _tax);
     tax = _tax;
