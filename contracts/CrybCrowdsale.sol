@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -76,6 +77,12 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
 
     startTs = _startTs;
     endTs = _endTs;
+  }
+
+  function whitelist(address[] memory privInvestors, uint256[] memory amounts) external onlyOwner {
+    for (uint256 i = 0; i < privInvestors.length; i++) {
+      vestingState.addBeneficiary(privInvestors[i], amounts[i]);
+    }
   }
 
   function buy() external payable nonReentrant whenNotPaused {
