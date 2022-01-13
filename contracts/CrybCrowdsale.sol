@@ -14,12 +14,17 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   using SafeERC20Upgradeable for IERC20Upgradeable;
   using Vesting for Vesting.State;
 
+  uint256 constant MILLION = 1_000_000 * 10**uint256(18);
+  // TODO: use the correct value
+  uint256 constant AVAILABLE_FOR_SALE = 1000 * MILLION;
+
   Vesting.State private vestingState;
   IERC20Upgradeable public token;
   address public treasury;
   // How many token units a buyer gets per wei
   uint256 public rate;
   uint256 public totalRaised;
+  uint256 public totalSold;
 
   // start and end timestamps
   uint256 public startTs;
@@ -49,7 +54,6 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     setTs(_startTs, _endTs);
 
     vestingState.initialize(
-      _startTs,
       _vestingDuration,
       _cliff
     );
@@ -79,17 +83,22 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     endTs = _endTs;
   }
 
-  function whitelist(address[] memory privInvestors, uint256[] memory amounts) external onlyOwner {
+  function whitelist(
+    address[] memory privInvestors,
+    uint256[] memory amounts
+  ) external onlyOwner {
     for (uint256 i = 0; i < privInvestors.length; i++) {
-      vestingState.addBeneficiary(privInvestors[i], amounts[i]);
+      vestingState.addBeneficiary(privInvestors[i], startTs, amounts[i]);
     }
   }
 
   function buy() external payable nonReentrant whenNotPaused {
     require(msg.value > 0, "cannot accept 0");
+    require(totalSold <= AVAILABLE_FOR_SALE, "sold out");
 
     uint256 tokenReceivable = msg.value * rate;
     totalRaised += msg.value;
+    totalSold += tokenReceivable;
 
     processPurchase(tokenReceivable);
     sendFunds();
@@ -99,7 +108,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
 
   function processPurchase(uint256 tokenReceivable) private {
     // vest the tokenReceivable
-    vestingState.addBeneficiary(_msgSender(), tokenReceivable);
+    vestingState.addBeneficiary(_msgSender(), block.timestamp, tokenReceivable);
   }
 
   function sendFunds() private {
@@ -107,15 +116,26 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     require(success, "transfer failed");
   }
 
-  // allow users claim vested tokens
-  function release() external {
-    require(block.timestamp >= vestingState.startTime, "Vesting not started");
+  function vestingCount(address beneficiary) public view returns (uint256) {
+    return vestingState.vestingCount(beneficiary);
+  }
 
+  // allow users claim vested tokens
+  function release(uint256 index) public {
     // release both offering and refund tokens
-    uint256 vestedAmount = vestingState.release(_msgSender());
+    uint256 vestedAmount = vestingState.release(_msgSender(), index);
     token.safeTransfer(_msgSender(), vestedAmount);
 
     emit Claimed(_msgSender(), vestedAmount);
+  }
+
+  // helper to release multiple vesting position in one go
+  function releaseAll() external {
+    uint256 count = vestingCount(_msgSender());
+
+    for (uint256 i = 0; i < count; i++) {
+      release(i);
+    }
   }
 
   function rescueToken(
