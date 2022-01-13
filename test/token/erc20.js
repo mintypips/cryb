@@ -15,7 +15,7 @@ describe('ERC20', () => {
   let alice
   let bob
   let token
-  const initialSupply = toBase('350000000')
+  const initialSupply = toBase('1000000000')
 
   before(async () => {
     initialHolder = await getOwner()
