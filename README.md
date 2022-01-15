@@ -6,6 +6,7 @@ Deployment
 Create the `.config.json` file in the root directory. A sample of the file is below
 
 
+```
 {
   "owner": {
     "privKey": "",
@@ -29,6 +30,7 @@ Create the `.config.json` file in the root directory. A sample of the file is be
   "crybCrowdsale": "0xeac5e0A44572Ed36DAC050Ac34dD2a0A9b296405",
   "excludedAccounts": ["0xB6f2D6E6e7A6236Cf8fafab61ebd4c8dcb1f5d12", "0xeac5e0A44572Ed36DAC050Ac34dD2a0A9b296405]
 }
+```
 
 1. Deploy the CrybToken contract
 
