@@ -5,7 +5,7 @@ const {endOfDay, addDays, fromSolTime} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
 const {setNextBlockTimestamp} = require('../helpers/evm')
 
-describe.only('CrybCrowdsale: withdrawRemaining', () => {
+describe('CrybCrowdsale: withdrawRemaining', () => {
   let crybCrowdsale
   let crybToken
   let owner

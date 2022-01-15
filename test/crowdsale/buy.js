@@ -5,7 +5,7 @@ const {endOfDay, addDays, fromSolTime} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
 const {setNextBlockTimestamp} = require('../helpers/evm')
 
-describe('CrybCrowdsale: buy', () => {
+describe.only('CrybCrowdsale: buy', () => {
   let crybCrowdsale
   let startTime
   let endTime
@@ -134,6 +134,28 @@ describe('CrybCrowdsale: buy', () => {
     treasuryBalanceAfter = await getBalance(treasury.address)
     expect(treasuryBalanceAfter.sub(treasuryBalanceBefore)).to.equal(toBase(100))
   })
+
+  it.only('should create a new vesting position for the given users', async () => {
+    await moveToStartTime()
+    
+    let {blockNumber} = await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    let {timestamp} = await ethers.provider.getBlock(blockNumber)
+    let vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
+    expect(vestingInfo.amount).to.equal(toBase(300))
+    expect(vestingInfo.totalClaimed).to.equal(0)
+    expect(vestingInfo.periodClaimed).to.equal(0)
+    expect(vestingInfo.startTime).to.equal(timestamp);
+
+    ({blockNumber} = await crybCrowdsale.connect(participants[1]).buy({value: toBase(40)}));
+    ({timestamp} = await ethers.provider.getBlock(blockNumber));
+    (vestingInfo = await crybCrowdsale.getVestingInfo(participants[1].address, 0));
+    expect(vestingInfo.amount).to.equal(toBase(400))
+    expect(vestingInfo.totalClaimed).to.equal(0)
+    expect(vestingInfo.periodClaimed).to.equal(0)
+    expect(vestingInfo.startTime).to.equal(timestamp)
+  })
+
+  
 
   it('should emit Buy event', async () => {
     await moveToStartTime()

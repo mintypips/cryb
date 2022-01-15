@@ -130,6 +130,13 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     return vestingState.vestingCount(beneficiary);
   }
 
+  function getVestingInfo(
+    address beneficiary,
+    uint256 index
+  ) external view returns(Vesting.VestingInfo memory) {
+    return vestingState.getVestingInfo(beneficiary, index);
+  }
+
   // allow users claim vested tokens
   function release(uint256 index) public {
     // release both offering and refund tokens
