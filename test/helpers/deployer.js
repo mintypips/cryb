@@ -1,11 +1,12 @@
 const {upgrades} = require('hardhat')
-const {getTreasury} = require('./account')
+const {getTreasury, getOwner} = require('./account')
 const {Contract, toBase} = require('./utils')
 const {duration} = require('./time')
 
 const deployCrybToken = async () => {
   const treasury = await getTreasury()
   const CrybToken = await Contract('MockCrybToken')
+  
   return await CrybToken.deploy(
     500, // 5%
     treasury.address
@@ -21,9 +22,9 @@ const deployCrybCrowdsale = async (
   vestingDuration=duration.days(10),
   cliff=0
 ) => {
+  const owner = await getOwner()
   const treasury = await getTreasury()
   const CrybToken = await Contract('CrybToken')
-
   const crybToken =  await CrybToken.deploy(
     tax,
     treasury.address
@@ -54,6 +55,10 @@ const deployCrybCrowdsale = async (
     vestingDuration,
     cliff
   ], opts)
+
+  // exclude owner and crowdsale
+  await crybToken.exclude(owner.address)
+  await crybToken.exclude(crybCrowdsale.address)
 
   return [crybCrowdsale, crybToken]
 }

@@ -116,9 +116,9 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   }
 
   function withdrawRemaining() external onlyOwner {
-    require(block.timestamp > endTime, "sale not finished yet");
+    require(block.timestamp >= endTime, "sale not finished yet");
     
-    token.safeTransfer(owner(), availableForSale - totalSold);
+    token.safeTransfer(treasury, availableForSale - totalSold);
   }
 
   function sendFunds() private {
@@ -153,6 +153,8 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     address recipient,
     uint256 amount
   ) external onlyOwner {
+    require(block.timestamp >= endTime, "sale not finished yet");
+
     tokenToRescue.safeTransfer(recipient, amount);
   }
 }
