@@ -122,7 +122,7 @@ describe('CrybCrowdsale: release', () => {
     expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 500))
   })
 
-  it.only('should emit Claimed', async () => {
+  it('should emit Claimed', async () => {
     await moveToStartTime()
     // total amount ready to be vested is 300
     await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
