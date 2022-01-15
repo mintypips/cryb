@@ -10,4 +10,4 @@ remainingTokens = availableForSale - totalSold
 MaxValue = remainingTokens / rate
 ```
 
-- The `CrybCrowdsale` contract should be excluded from the taxation imposed on all CRYB transfers???
+- The `CrybCrowdsale` contract and the owner that has the initial total supply of CRYB should be excluded from the taxation imposed on all CRYB transfers???
