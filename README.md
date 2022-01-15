@@ -1,15 +1,13 @@
-# Basic Sample Hardhat Project
+# CrybCrowdsale
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Note
+===
 
-Try running some of the following tasks:
+- On the front end we need to make sure that the ETH amount user wants to send will guarantee him a successful purchase. More specifically, there is a limit of how many CRYB tokens the contract will sell; thus towards the end of the crowdsale the amount a user sends might exceed the amount of tokens currently available. To find out the max one can send you should use the following equation:
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
 ```
+remainingTokens = availableForSale - totalSold
+MaxValue = remainingTokens / rate
+```
+
+- The `CrybCrowdsale` contract should be excluded from the taxation imposed on all CRYB transfers???

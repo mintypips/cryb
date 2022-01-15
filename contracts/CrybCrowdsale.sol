@@ -99,7 +99,6 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     require(block.timestamp < endTime, "sale ended");
 
     uint256 tokenReceivable = msg.value * rate;
-    console.log("totalSold + tokenReceivable", totalSold + tokenReceivable);
     require(totalSold + tokenReceivable <= availableForSale, "sold out");
     
     totalRaised += msg.value;

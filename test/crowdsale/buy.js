@@ -70,4 +70,23 @@ describe.only('CrybCrowdsale: buy', () => {
       crybCrowdsale.connect(participants[0]).buy({value: 1}) // even the tiniest amount should make it fail
     ).to.revertedWith('sold out')
   })
+
+  it('should increase the totalRaised value', async () => {
+    await moveToStartTime()
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    let totalRaised = await crybCrowdsale.totalRaised()
+    expect(totalRaised).to.equal(toBase(30))
+
+    await crybCrowdsale.connect(participants[1]).buy({value: toBase(30)})
+    totalRaised = await crybCrowdsale.totalRaised()
+    expect(totalRaised).to.equal(toBase(60))
+
+    await crybCrowdsale.connect(participants[2]).buy({value: toBase(30)})
+    totalRaised = await crybCrowdsale.totalRaised()
+    expect(totalRaised).to.equal(toBase(90))
+
+    await crybCrowdsale.connect(participants[3]).buy({value: toBase(10)})
+    totalRaised = await crybCrowdsale.totalRaised()
+    expect(totalRaised).to.equal(toBase(100))
+  })
 })
