@@ -56,4 +56,18 @@ describe.only('CrybCrowdsale: buy', () => {
       crybCrowdsale.connect(participants[0]).buy({value: 0})
     ).to.revertedWith('cannot accept 0')
   })
+
+  it('should revert if sold out', async () => {
+    await moveToStartTime()
+
+    crybCrowdsale.connect(participants[0]).buy({value: 30}) // 30 ETH will buy 300 tokens
+    crybCrowdsale.connect(participants[1]).buy({value: 30}) // 30 ETH will buy 300 tokens
+    crybCrowdsale.connect(participants[2]).buy({value: 30}) // 30 ETH will buy 300 tokens
+    crybCrowdsale.connect(participants[3]).buy({value: 10}) // 10 ETH will buy 100 tokens
+
+    // 1000 has been already sold which is the total available for sale
+    await expect(
+      crybCrowdsale.connect(participants[0]).buy({value: 1})
+    ).to.revertedWith('cannot accept 0')
+  })
 })

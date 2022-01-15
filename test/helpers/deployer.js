@@ -15,7 +15,7 @@ const deployCrybToken = async () => {
 const deployCrybCrowdsale = async (
   startTime,
   endTime,
-  availebleForSale=toBase('1000000'),
+  availebleForSale=toBase('1000'),
   tax=500, //5%
   rate=10, // price per token 0.1 ETH so rate is 1/0.1=10
   vestingDuration=duration.days(10),
