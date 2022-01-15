@@ -1,5 +1,5 @@
 const {upgrades} = require('hardhat')
-const {getTreasury} = require('./accounts')
+const {getTreasury} = require('./account')
 const {Contract} = require('./utils')
 const {duration} = require('./time')
 
@@ -13,10 +13,10 @@ const deployCrybToken = async () => {
 }
 
 const deployCrybCrowdsale = async (
+  startTime,
+  endTime,
   tax=500, //5%
-  rate=10, // price per token 0.1 ETH
-  startTs,
-  endTs,
+  rate=10, // price per token 0.1 ETH so rate is 1/0.1=10
   vestingDuration=duration.days(10),
   cliff=0
 ) => {
@@ -28,17 +28,32 @@ const deployCrybCrowdsale = async (
     treasury.address
   )
 
-  const CrybCrowdsale = await Contract('CrybCrowdsale')
+  const opts = {
+    unsafeAllow: ['external-library-linking']
+  }
+
+  // deploy vesting
+  const Vesting = await Contract('Vesting')
+  const vesting = await Vesting.deploy()
+
+  const CrybCrowdsale = await Contract('CrybCrowdsale', {
+    libraries: {
+      Vesting: vesting.address
+    },
+    unsafeAllowLinkedLibraries: true
+  })
+
   const crybCrowdsale = await upgrades.deployProxy(CrybCrowdsale, [
     crybToken.address,
     treasury.address,
-    startTs,
-    endTs,
+    rate,
+    startTime,
+    endTime,
     vestingDuration,
     cliff
-  ])
+  ], opts)
 
-  return [crybToken, crybCrowdsale]
+  return [crybCrowdsale, crybToken]
 }
 
 module.exports = {

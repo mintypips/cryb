@@ -45,19 +45,12 @@ const dayAfter = (day=new Date()) => {
   return toSolTime(date)
 }
 
-const addDays = async (days, date) => {
-  if(!date) {
-    const {timestamp} = await ethers.provider.getBlock()
-    date = new Date(fromSolTime(timestamp))
-  }
-
-  return new Date(date.getTime() + (duration.days(days) * 1000))
-}
+const addDays = (days, date=new Date()) => new Date(date.getTime() + days * 8.64e7)
 
 const getDaysFromEpoch = (date=new Date()) => Math.floor(date / 8.64e7)
 
 const toSolTime = ts => Math.floor(ts / 1000)
-const fromSolTime = ts => ts * 1000;
+const fromSolTime = ts => ts * 1000
 
 module.exports = {
   duration,

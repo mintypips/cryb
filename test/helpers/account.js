@@ -20,9 +20,16 @@ const getBob = async () => {
   return accounts[6]
 }
 
+const getParticipants = async () => {
+  const accounts = await ethers.getSigners()
+  return [accounts[2], accounts[3], accounts[4], accounts[5]]
+}
+
+
 module.exports = {
   getOwner,
   getTreasury,
   getAlice,
-  getBob
+  getBob,
+  getParticipants
 }

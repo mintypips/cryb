@@ -1,10 +1,33 @@
 const {expect} = require('chai')
-const {getParticipants, ZERO_ADDRESS} = require('../helpers/account')
+const {getParticipants} = require('../helpers/account')
 const {toBase, execAndGetTransferAmount} = require('../helpers/utils')
-const {LockPeriod, duration, endOfDay, addDays, toSolTime} = require('../helpers/time')
-const {deployF8Staking, setup} = require('../helpers/deployer')
+const {duration, endOfDay, addDays, fromSolTime} = require('../helpers/time')
+const {deployCrybCrowdsale} = require('../helpers/deployer')
 const {setNextBlockTimestamp} = require('../helpers/evm')
 
-describe('CrybCrowdsale: buy', () => {
-  
+describe.only('CrybCrowdsale: buy', () => {
+  let crybCrowdsale
+  let startTime
+  let endTime
+  let participants
+
+  beforeEach(async () => {
+    const {timestamp} = await ethers.provider.getBlock()
+    const now = new Date(fromSolTime(Number(timestamp)))
+    startTime = endOfDay(addDays(1, now))
+    endTime = endOfDay(addDays(20, new Date(fromSolTime(startTime))));
+
+    ([crybCrowdsale] = await deployCrybCrowdsale(
+      startTime,
+      endTime
+    ))
+
+    participants = await getParticipants()
+  })
+
+  it('should revert if sale has not started', async () => {
+    await expect(
+      crybCrowdsale.connect(participants[0]).buy({value: toBase(1, 17)}) //0.1
+    ).to.revertedWith('sale not started')
+  })
 })

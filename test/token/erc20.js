@@ -1,5 +1,5 @@
 const {expect} = require('chai')
-const {getOwner, getBob, getAlice} = require('../helpers/accounts')
+const {getOwner, getBob, getAlice} = require('../helpers/account')
 const {deployCrybToken} = require('../helpers/deployer')
 const {toBase} = require('../helpers/utils')
 const {
