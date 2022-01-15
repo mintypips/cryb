@@ -1,5 +1,5 @@
 const {expect} = require('chai')
-const {getParticipants} = require('../helpers/account')
+const {getParticipants, getTreasury, getBalance} = require('../helpers/account')
 const {toBase, execAndGetTransferAmount} = require('../helpers/utils')
 const {duration, endOfDay, addDays, fromSolTime} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
@@ -108,6 +108,31 @@ describe.only('CrybCrowdsale: buy', () => {
     await crybCrowdsale.connect(participants[3]).buy({value: toBase(10)})
     totalSold = await crybCrowdsale.totalSold()
     expect(totalSold).to.equal(toBase(1000))
+  })
+
+  it('should transfer ETH to the treasury account', async () => {
+    await moveToStartTime()
+
+    const treasury = await getTreasury()
+
+    let treasuryBalanceBefore = await getBalance(treasury.address)
+
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    let treasuryBalanceAfter = await getBalance(treasury.address)
+    expect(treasuryBalanceAfter.sub(treasuryBalanceBefore)).to.equal(toBase(30))
+
+    await crybCrowdsale.connect(participants[1]).buy({value: toBase(30)})
+    treasuryBalanceAfter = await getBalance(treasury.address)
+    expect(treasuryBalanceAfter.sub(treasuryBalanceBefore)).to.equal(toBase(60))
+
+    await crybCrowdsale.connect(participants[2]).buy({value: toBase(30)})
+    treasuryBalanceAfter = await getBalance(treasury.address)
+    expect(treasuryBalanceAfter.sub(treasuryBalanceBefore)).to.equal(toBase(90))
+
+    // started with x balance ended with x + 100 balance received from the crowdsale
+    await crybCrowdsale.connect(participants[3]).buy({value: toBase(10)})
+    treasuryBalanceAfter = await getBalance(treasury.address)
+    expect(treasuryBalanceAfter.sub(treasuryBalanceBefore)).to.equal(toBase(100))
   })
 
   it('should emit Buy event', async () => {

@@ -25,11 +25,13 @@ const getParticipants = async () => {
   return [accounts[2], accounts[3], accounts[4], accounts[5]]
 }
 
+const getBalance = async account => await ethers.provider.getBalance(account)
 
 module.exports = {
   getOwner,
   getTreasury,
   getAlice,
   getBob,
-  getParticipants
+  getParticipants,
+  getBalance
 }
