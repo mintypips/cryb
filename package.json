@@ -7,7 +7,11 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "contract-size": "yarn run hardhat size-contracts",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "deploy:token:rinkeby": "npx hardhat run deploy/crybToken.js --network rinkeby",
+    "deploy:token:mainnet": "npx hardhat run deploy/crybToken.js --network mainnet",
+    "deploy:crowdsale:rinkeby": "npx hardhat run deploy/crybCrowdsale.js --network rinkeby",
+    "deploy:crowdsale:mainnet": "npx hardhat run deploy/crybCrowdsale.js --network mainnet"
   },
   "license": "MIT",
   "devDependencies": {
