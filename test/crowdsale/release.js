@@ -71,7 +71,7 @@ describe.only('CrybCrowdsale: release', () => {
     await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
     const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
 
-    // the first 5 days users releases linearly the vested tokens from position 1
+    // the first 4 days users releases linearly the vested tokens from position 1
     for (let i = 1; i <= 4; i++) {
       // move one day from the vesting start time
       await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
@@ -89,7 +89,7 @@ describe.only('CrybCrowdsale: release', () => {
     await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(vestingInfo.startTime)))))
     await crybCrowdsale.connect(participants[0]).buy({value: toBase(50)})
 
-    // from day 5 and on user will be able to release from both vesting positions
+    // from day 6 and on user will be able to release from both vesting positions
     for (let i=6; i <= 10; i++) {
       // move one day from the vesting start time
       await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
@@ -112,5 +112,18 @@ describe.only('CrybCrowdsale: release', () => {
 
     // on day 10 we have fully released the tokens from position 1 and half of position 2
     expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 250))
+
+    // from day 11 until day 15 the rest of the vesting position 2 will be released and none of the fully vested position 1
+    for (let i=11; i <= 15; i++) {
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+
+      let balanceBefore = await crybToken.balanceOf(participants[0].address)
+      await crybCrowdsale.connect(participants[0]).releaseAll()
+      let balanceAfter = await crybToken.balanceOf(participants[0].address)
+      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(50))
+    }
+
+    // on day 15 all position are fully vested
+    expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 500))
   })
 })

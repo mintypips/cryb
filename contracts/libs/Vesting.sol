@@ -84,9 +84,12 @@ library Vesting {
     State storage self,
     address beneficiary,
     uint256 index
-  ) private view returns (uint256, uint256) {
+  ) public view returns (uint256, uint256) {
     VestingInfo storage vestingInfo = getVestingInfo(self, beneficiary, index);
-    require(vestingInfo.totalClaimed < vestingInfo.amount, "Tokens fully claimed");
+    
+    if(vestingInfo.totalClaimed == vestingInfo.amount) {
+      return (0, 0);
+    }
 
     // For vesting created with a future start date, that hasn't been reached, return 0, 0
     if (block.timestamp < getCliff(self)) {
