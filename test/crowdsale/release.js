@@ -1,11 +1,11 @@
 const {expect} = require('chai')
-const {getParticipants, getTreasury, getBalance, getOwner} = require('../helpers/account')
+const {getParticipants, getOwner} = require('../helpers/account')
 const {toBase} = require('../helpers/utils')
 const {endOfDay, addDays, fromSolTime, toSolTime} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
 const {setNextBlockTimestamp} = require('../helpers/evm')
 
-describe.only('CrybCrowdsale: release', () => {
+describe('CrybCrowdsale: release', () => {
   let crybCrowdsale
   let crybToken
   let startTime
@@ -33,11 +33,6 @@ describe.only('CrybCrowdsale: release', () => {
   const moveToStartTime = async () => {
     const startTime = await crybCrowdsale.startTime()
     await setNextBlockTimestamp(Number(startTime))
-  }
-
-  const moveToEndTime= async () => {
-    const endTime = await crybCrowdsale.endTime()
-    await setNextBlockTimestamp(Number(endTime))
   }
 
   it('should allow user linearly release vested tokens', async () => {
