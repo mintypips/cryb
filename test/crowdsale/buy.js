@@ -48,4 +48,12 @@ describe.only('CrybCrowdsale: buy', () => {
       crybCrowdsale.connect(participants[0]).buy({value: toBase(1, 17)}) //0.1
     ).to.revertedWith('sale ended')
   })
+
+  it('should revert if send 0 ETH', async () => {
+    await moveToStartTime()
+
+    await expect(
+      crybCrowdsale.connect(participants[0]).buy({value: 0})
+    ).to.revertedWith('cannot accept 0')
+  })
 })

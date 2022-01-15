@@ -1,6 +1,6 @@
 const {upgrades} = require('hardhat')
 const {getTreasury} = require('./account')
-const {Contract} = require('./utils')
+const {Contract, toBase} = require('./utils')
 const {duration} = require('./time')
 
 const deployCrybToken = async () => {
@@ -15,6 +15,7 @@ const deployCrybToken = async () => {
 const deployCrybCrowdsale = async (
   startTime,
   endTime,
+  availebleForSale=toBase('1000000'),
   tax=500, //5%
   rate=10, // price per token 0.1 ETH so rate is 1/0.1=10
   vestingDuration=duration.days(10),
@@ -49,6 +50,7 @@ const deployCrybCrowdsale = async (
     rate,
     startTime,
     endTime,
+    availebleForSale,
     vestingDuration,
     cliff
   ], opts)

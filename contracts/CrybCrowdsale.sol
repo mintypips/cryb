@@ -14,10 +14,6 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   using SafeERC20Upgradeable for IERC20Upgradeable;
   using Vesting for Vesting.State;
 
-  uint256 constant MILLION = 1_000_000 * 10**uint256(18);
-  // TODO: use the correct value
-  uint256 constant AVAILABLE_FOR_SALE = 1000 * MILLION;
-
   Vesting.State private vestingState;
   IERC20Upgradeable public token;
   address public treasury;
@@ -29,6 +25,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   // start and end timestamps
   uint256 public startTime;
   uint256 public endTime;
+  uint256 public availableForSale;
 
   event RateChanged(uint256 oldRate, uint256 newRate);
   event Buy(address indexed buyer, uint256 amount, uint256 tokenReceivable);
@@ -40,6 +37,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     uint256 _rate,
     uint256 _startTime,
     uint256 _endTime,
+    uint256 _availableForSale,
     uint256 _vestingDuration,
     uint256 _cliff
   ) public initializer {
@@ -49,6 +47,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
 
     token = _token;
     treasury = _treasury;
+    availableForSale = _availableForSale;
     
     setRate(_rate);
     setTs(_startTime, _endTime);
@@ -94,7 +93,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
 
   function buy() external payable nonReentrant whenNotPaused {
     require(msg.value > 0, "cannot accept 0");
-    require(totalSold <= AVAILABLE_FOR_SALE, "sold out");
+    require(totalSold <= availableForSale, "sold out");
     require(block.timestamp >= startTime, "sale not started");
     require(block.timestamp < endTime, "sale ended");
 
@@ -116,7 +115,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   function withdrawRemaining() external onlyOwner {
     require(block.timestamp > endTime, "sale not finished yet");
     
-    token.safeTransfer(owner(), AVAILABLE_FOR_SALE - totalSold);
+    token.safeTransfer(owner(), availableForSale - totalSold);
   }
 
   function sendFunds() private {
