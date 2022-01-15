@@ -1,5 +1,5 @@
 const {ethers, upgrades} = require('hardhat')
-const {toBase} = require('../test/helpers')
+const {toBase, Contract} = require('../test/helpers/utils')
 const {
   deploymentParams: {
     crybToken,
@@ -35,7 +35,7 @@ const main = async () => {
     rate,
     startTime,
     endTime,
-    availebleForSale,
+    toBase(availebleForSale),
     vestingDuration,
     cliff
   ]

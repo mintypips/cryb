@@ -11,7 +11,9 @@
     "deploy:token:rinkeby": "npx hardhat run deploy/crybToken.js --network rinkeby",
     "deploy:token:mainnet": "npx hardhat run deploy/crybToken.js --network mainnet",
     "deploy:crowdsale:rinkeby": "npx hardhat run deploy/crybCrowdsale.js --network rinkeby",
-    "deploy:crowdsale:mainnet": "npx hardhat run deploy/crybCrowdsale.js --network mainnet"
+    "deploy:crowdsale:mainnet": "npx hardhat run deploy/crybCrowdsale.js --network mainnet",
+    "excludeAccount:rinkeby": "npx hardhat run scripts/exclude.js --network rinkeby",
+    "excludeAccount:mainnet": "npx hardhat run scripts/exclude.js --network mainnet"
   },
   "license": "MIT",
   "devDependencies": {

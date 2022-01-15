@@ -35,11 +35,24 @@ contract CrybToken is Ownable, ERC20 {
     treasury = _treasury;
   }
 
-  function exclude(address account) external onlyOwner {
+
+  function exludeMultiple(address[] memory accounts) external onlyOwner {
+    for (uint256 i = 0; i < accounts.length; i++) {
+      exclude(accounts[i]);
+    }
+  }
+
+  function includeMultiple(address[] memory accounts) external onlyOwner {
+    for (uint256 i = 0; i < accounts.length; i++) {
+      include(accounts[i]);
+    }
+  }
+
+  function exclude(address account) public onlyOwner {
     isExluded[account] = true;
   }
 
-  function include(address account) external onlyOwner {
+  function include(address account) public onlyOwner {
     isExluded[account] = false;
   }
 

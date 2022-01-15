@@ -1,5 +1,4 @@
-const {ethers, upgrades} = require('hardhat')
-const {toBase} = require('../test/helpers')
+const {Contract} = require('../test/helpers/utils')
 const {
   deploymentParams: {
     tax,
