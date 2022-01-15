@@ -207,6 +207,46 @@ describe('CrybCrowdsale: release', () => {
     expect(await crybToken.balanceOf(participants[1].address)).to.equal(toBase(500))
   })
 
+  it.only('should allow whitelisted users release without any prior purchases via the buy method', async () => {
+    await crybCrowdsale.whitelist(
+      [participants[0].address, participants[1].address],
+      [toBase(300), toBase(500)]
+    )
+
+    // whitelisted users have the same start time for vestinf
+    const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
+
+    // from day 6 and on user will be able to release from both vesting positions
+    for (let i=1; i <= 10; i++) {
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+
+      // release user 1
+      let balanceBefore = await crybToken.balanceOf(participants[0].address)
+      await crybCrowdsale.connect(participants[0]).releaseAll()
+      let balanceAfter = await crybToken.balanceOf(participants[0].address)
+      
+      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
+      
+      // release user 2
+      balanceBefore = await crybToken.balanceOf(participants[1].address)
+      await crybCrowdsale.connect(participants[1]).releaseAll()
+      balanceAfter = await crybToken.balanceOf(participants[1].address)
+      
+      if(i === 1) {
+        expect(balanceAfter.sub(balanceBefore)).to.equal('50000578703703703703')
+      }
+      else if(i === 10) {
+        expect(balanceAfter.sub(balanceBefore)).to.equal('49999421296296296297')
+      }
+      else {
+        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(50))
+      }
+    }
+
+    expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300))
+    expect(await crybToken.balanceOf(participants[1].address)).to.equal(toBase(500))
+  })
+
   it('should emit Claimed', async () => {
     await moveToStartTime()
     // total amount ready to be vested is 300
