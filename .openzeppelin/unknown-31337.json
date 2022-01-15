@@ -52,13 +52,13 @@
       "kind": "uups"
     },
     {
-      "address": "0x88397077cA8F64933c0312fa239536FA23cd2e8F",
-      "txHash": "0x1f4f1bed4d42f2f4f73f565de0a09a7af733a4ec7baf3d32629fc31c515aa7cc",
+      "address": "0x308EEdc1C6f037fDC9B545Ebbe3615675692b0F4",
+      "txHash": "0x959e7e96aa00ac3eb821db1695d6e144e812a9f66bea0c2bb0fc271567b2982b",
       "kind": "uups"
     },
     {
-      "address": "0x308EEdc1C6f037fDC9B545Ebbe3615675692b0F4",
-      "txHash": "0x959e7e96aa00ac3eb821db1695d6e144e812a9f66bea0c2bb0fc271567b2982b",
+      "address": "0x88397077cA8F64933c0312fa239536FA23cd2e8F",
+      "txHash": "0x1f4f1bed4d42f2f4f73f565de0a09a7af733a4ec7baf3d32629fc31c515aa7cc",
       "kind": "uups"
     }
   ],

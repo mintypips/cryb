@@ -135,7 +135,7 @@ describe.only('CrybCrowdsale: buy', () => {
     expect(treasuryBalanceAfter.sub(treasuryBalanceBefore)).to.equal(toBase(100))
   })
 
-  it.only('should create a new vesting position for the given users', async () => {
+  it('should create a new vesting position for the given users', async () => {
     await moveToStartTime()
     
     let {blockNumber} = await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
@@ -155,7 +155,7 @@ describe.only('CrybCrowdsale: buy', () => {
     expect(vestingInfo.startTime).to.equal(timestamp)
   })
 
-  it.only('should allow the same user have multiple vesting positions', async () => {
+  it('should allow the same user have multiple vesting positions', async () => {
     await moveToStartTime()
     
     let {blockNumber} = await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
@@ -183,6 +183,24 @@ describe.only('CrybCrowdsale: buy', () => {
     expect(vestingInfo.totalClaimed).to.equal(0)
     expect(vestingInfo.periodClaimed).to.equal(0)
     expect(vestingInfo.startTime).to.equal(timestamp)
+  })
+
+  it('should update the vesting count for each user', async () => {
+    await moveToStartTime()
+
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    let vestingCount0 = await crybCrowdsale.vestingCount(participants[0].address)
+    expect(vestingCount0).to.equal(1)
+
+    // second vesting position for user 0
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(10)})
+    vestingCount0 = await crybCrowdsale.vestingCount(participants[0].address)
+    expect(vestingCount0).to.equal(2)
+
+    // first position for user 1
+    await crybCrowdsale.connect(participants[1]).buy({value: toBase(5)})
+    let vestingCount1 = await crybCrowdsale.vestingCount(participants[1].address)
+    expect(vestingCount1).to.equal(1)
   })
 
   it('should emit Buy event', async () => {
