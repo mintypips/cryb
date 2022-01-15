@@ -96,7 +96,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     require(msg.value > 0, "cannot accept 0");
     require(totalSold <= AVAILABLE_FOR_SALE, "sold out");
     require(block.timestamp >= startTime, "sale not started");
-    require(block.timestamp <= endTime, "sale finished");
+    require(block.timestamp < endTime, "sale ended");
 
     uint256 tokenReceivable = msg.value * rate;
     totalRaised += msg.value;

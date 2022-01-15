@@ -25,9 +25,27 @@ describe.only('CrybCrowdsale: buy', () => {
     participants = await getParticipants()
   })
 
+  const moveToStartTime = async () => {
+    const startTime = await crybCrowdsale.startTime()
+    await setNextBlockTimestamp(Number(startTime))
+  }
+
+  const moveToEndTime= async () => {
+    const endTime = await crybCrowdsale.endTime()
+    await setNextBlockTimestamp(Number(endTime))
+  }
+
   it('should revert if sale has not started', async () => {
     await expect(
       crybCrowdsale.connect(participants[0]).buy({value: toBase(1, 17)}) //0.1
     ).to.revertedWith('sale not started')
+  })
+
+  it('should revert if sale has ended', async () => {
+    await moveToEndTime()
+
+    await expect(
+      crybCrowdsale.connect(participants[0]).buy({value: toBase(1, 17)}) //0.1
+    ).to.revertedWith('sale ended')
   })
 })
