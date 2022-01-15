@@ -28,11 +28,17 @@ const deployCrybCrowdsale = async (
     treasury.address
   )
 
-  const crybToken = await upgrades.deployProxy(CrybToken, [
+  const CrybCrowdsale = await Contract('CrybCrowdsale')
+  const crybCrowdsale = await upgrades.deployProxy(CrybCrowdsale, [
     crybToken.address,
     treasury.address,
-
+    startTs,
+    endTs,
+    vestingDuration,
+    cliff
   ])
+
+  return [crybToken, crybCrowdsale]
 }
 
 module.exports = {
