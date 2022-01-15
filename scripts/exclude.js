@@ -11,7 +11,7 @@ async function main() {
     deploymentParams.crybToken
   )
 
-  await crybToken.connect(owner).exludeMultiple(excludedAccounts)
+  await crybToken.connect(owner).excludeMultiple(excludedAccounts)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
