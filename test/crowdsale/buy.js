@@ -155,7 +155,35 @@ describe.only('CrybCrowdsale: buy', () => {
     expect(vestingInfo.startTime).to.equal(timestamp)
   })
 
-  
+  it.only('should allow the same user have multiple vesting positions', async () => {
+    await moveToStartTime()
+    
+    let {blockNumber} = await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    let {timestamp} = await ethers.provider.getBlock(blockNumber)
+    let vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
+    expect(vestingInfo.amount).to.equal(toBase(300))
+    expect(vestingInfo.totalClaimed).to.equal(0)
+    expect(vestingInfo.periodClaimed).to.equal(0)
+    expect(vestingInfo.startTime).to.equal(timestamp);
+
+    // second position
+    ({blockNumber} = await crybCrowdsale.connect(participants[0]).buy({value: toBase(10)}));
+    ({timestamp} = await ethers.provider.getBlock(blockNumber));
+    (vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 1));
+    expect(vestingInfo.amount).to.equal(toBase(100))
+    expect(vestingInfo.totalClaimed).to.equal(0)
+    expect(vestingInfo.periodClaimed).to.equal(0)
+    expect(vestingInfo.startTime).to.equal(timestamp);
+
+    // third position
+    ({blockNumber} = await crybCrowdsale.connect(participants[0]).buy({value: toBase(40)}));
+    ({timestamp} = await ethers.provider.getBlock(blockNumber));
+    (vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 2));
+    expect(vestingInfo.amount).to.equal(toBase(400))
+    expect(vestingInfo.totalClaimed).to.equal(0)
+    expect(vestingInfo.periodClaimed).to.equal(0)
+    expect(vestingInfo.startTime).to.equal(timestamp)
+  })
 
   it('should emit Buy event', async () => {
     await moveToStartTime()
