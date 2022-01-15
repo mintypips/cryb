@@ -92,6 +92,7 @@ describe.only('CrybCrowdsale: buy', () => {
 
   it('should increase the totalSold value', async () => {
     await moveToStartTime()
+
     await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
     let totalSold = await crybCrowdsale.totalSold()
     expect(totalSold).to.equal(toBase(300))
@@ -107,5 +108,20 @@ describe.only('CrybCrowdsale: buy', () => {
     await crybCrowdsale.connect(participants[3]).buy({value: toBase(10)})
     totalSold = await crybCrowdsale.totalSold()
     expect(totalSold).to.equal(toBase(1000))
+  })
+
+  it('should emit Buy event', async () => {
+    await moveToStartTime()
+
+    await expect(
+      crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    )
+    .to
+    .emit(crybCrowdsale, 'Buy')
+    .withArgs(
+      participants[0].address,
+      toBase(30),
+      toBase(300),
+    )
   })
 })
