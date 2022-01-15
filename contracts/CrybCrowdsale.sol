@@ -10,6 +10,8 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./libs/Vesting.sol";
 
+import "hardhat/console.sol";
+
 contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable {
   using SafeERC20Upgradeable for IERC20Upgradeable;
   using Vesting for Vesting.State;
@@ -97,6 +99,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     require(block.timestamp < endTime, "sale ended");
 
     uint256 tokenReceivable = msg.value * rate;
+    console.log("totalSold + tokenReceivable", totalSold + tokenReceivable);
     require(totalSold + tokenReceivable <= availableForSale, "sold out");
     
     totalRaised += msg.value;

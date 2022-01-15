@@ -2,217 +2,30 @@
   "manifestVersion": "3.2",
   "proxies": [
     {
-      "address": "0x88397077cA8F64933c0312fa239536FA23cd2e8F",
-      "txHash": "0x21aaac3aab44a179713d70e7d44eb7dec758ce83a65f5bdb41cffeb930bf64b2",
-      "kind": "uups"
-    },
-    {
       "address": "0x65f828072849474aAe45350dF9526f1D25823213",
-      "txHash": "0xd4093de1ce19e5e192f8fcd41e1e4bf4f9acab0035b4bdcd7567e32f4a2f662a",
+      "txHash": "0x5d4321581881b24068b024d3e993cc7359f418d79ed1d0a8fd51b8a6e970219d",
       "kind": "uups"
     },
     {
       "address": "0x52a70ba81823a3b115b9C3D72f6fc41a0E35a2d2",
-      "txHash": "0x122c865334241f7418cfa8079847edcba6834e70a2babe9994e1ed6a81a3ffaa",
+      "txHash": "0x2d9ca48f80c7f3ae411422150f0cbef9c28ef7f998c4d3782cf230b096eb11af",
+      "kind": "uups"
+    },
+    {
+      "address": "0x570FFeE99346df458418B198cb534DA17DE5EC30",
+      "txHash": "0x4b96da3c9594c532749ad766cd9e7926cef34d553e7d06e7ca11061690690b9c",
+      "kind": "uups"
+    },
+    {
+      "address": "0x88397077cA8F64933c0312fa239536FA23cd2e8F",
+      "txHash": "0xa6ca5e5247eda621cb6c57bdc547ac00571d0c3942838ea34a595175dadcb278",
       "kind": "uups"
     }
   ],
   "impls": {
-    "30cf1ae86eef5a6ba4b3e379ae7be888d1ab3e2decd804cff2c1b445847c234e": {
-      "address": "0x7CE59952D1d746689351EfBDb0cD875905327D7a",
-      "txHash": "0xc0895a91bdc2a4198a6f3288b5d17bc69540a018eba0cd393a365dc27e6f6497",
-      "layout": {
-        "storage": [
-          {
-            "contract": "Initializable",
-            "label": "_initialized",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
-          },
-          {
-            "contract": "Initializable",
-            "label": "_initializing",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
-          },
-          {
-            "contract": "ERC1967UpgradeUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:215"
-          },
-          {
-            "contract": "UUPSUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:81"
-          },
-          {
-            "contract": "ContextUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
-          },
-          {
-            "contract": "OwnableUpgradeable",
-            "label": "_owner",
-            "type": "t_address",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
-          },
-          {
-            "contract": "OwnableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
-          },
-          {
-            "contract": "ReentrancyGuardUpgradeable",
-            "label": "_status",
-            "type": "t_uint256",
-            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
-          },
-          {
-            "contract": "ReentrancyGuardUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:68"
-          },
-          {
-            "contract": "PausableUpgradeable",
-            "label": "_paused",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
-          },
-          {
-            "contract": "PausableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:97"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "vestingState",
-            "type": "t_struct(State)2019_storage",
-            "src": "contracts/CrybCrowdsale.sol:17"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "token",
-            "type": "t_contract(IERC20Upgradeable)967",
-            "src": "contracts/CrybCrowdsale.sol:18"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "treasury",
-            "type": "t_address",
-            "src": "contracts/CrybCrowdsale.sol:19"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "rate",
-            "type": "t_uint256",
-            "src": "contracts/CrybCrowdsale.sol:21"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "totalRaised",
-            "type": "t_uint256",
-            "src": "contracts/CrybCrowdsale.sol:22"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "totalSold",
-            "type": "t_uint256",
-            "src": "contracts/CrybCrowdsale.sol:23"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "startTime",
-            "type": "t_uint256",
-            "src": "contracts/CrybCrowdsale.sol:26"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "endTime",
-            "type": "t_uint256",
-            "src": "contracts/CrybCrowdsale.sol:27"
-          },
-          {
-            "contract": "CrybCrowdsale",
-            "label": "availableForSale",
-            "type": "t_uint256",
-            "src": "contracts/CrybCrowdsale.sol:28"
-          }
-        ],
-        "types": {
-          "t_struct(State)2019_storage": {
-            "label": "struct Vesting.State",
-            "members": [
-              {
-                "label": "vestingDuration",
-                "type": "t_uint256"
-              },
-              {
-                "label": "cliff",
-                "type": "t_uint256"
-              },
-              {
-                "label": "vestingInfo",
-                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2008_storage)dyn_storage)"
-              }
-            ]
-          },
-          "t_uint256": {
-            "label": "uint256"
-          },
-          "t_mapping(t_address,t_array(t_struct(VestingInfo)2008_storage)dyn_storage)": {
-            "label": "mapping(address => struct Vesting.VestingInfo[])"
-          },
-          "t_address": {
-            "label": "address"
-          },
-          "t_array(t_struct(VestingInfo)2008_storage)dyn_storage": {
-            "label": "struct Vesting.VestingInfo[]"
-          },
-          "t_struct(VestingInfo)2008_storage": {
-            "label": "struct Vesting.VestingInfo",
-            "members": [
-              {
-                "label": "amount",
-                "type": "t_uint256"
-              },
-              {
-                "label": "totalClaimed",
-                "type": "t_uint256"
-              },
-              {
-                "label": "periodClaimed",
-                "type": "t_uint256"
-              },
-              {
-                "label": "startTime",
-                "type": "t_uint256"
-              }
-            ]
-          },
-          "t_contract(IERC20Upgradeable)967": {
-            "label": "contract IERC20Upgradeable"
-          },
-          "t_bool": {
-            "label": "bool"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]"
-          }
-        }
-      }
-    },
-    "4ba3fb997ac1e0bc87df470f835ff241e55586ce1759d1ad39fff38d732eefb1": {
+    "d1673f9c367277030c62cbf1045f629bb13223006526ba692103307f341a60ab": {
       "address": "0xDf919A2400496E3f60da35eA3a80f7Bb348830e9",
-      "txHash": "0x5f33a5c7873583f83164d4fc1596166bbb95b6dbaf14fd9769c335267aa41710",
+      "txHash": "0xac4df3aa00162056c448f892fb73779ad5aa35a3acaf7a4d900ae102f9a071f3",
       "layout": {
         "storage": [
           {
@@ -284,7 +97,7 @@
           {
             "contract": "CrybCrowdsale",
             "label": "vestingState",
-            "type": "t_struct(State)2019_storage",
+            "type": "t_struct(State)2021_storage",
             "src": "contracts/CrybCrowdsale.sol:17"
           },
           {
@@ -337,7 +150,7 @@
           }
         ],
         "types": {
-          "t_struct(State)2019_storage": {
+          "t_struct(State)2021_storage": {
             "label": "struct Vesting.State",
             "members": [
               {
@@ -350,23 +163,23 @@
               },
               {
                 "label": "vestingInfo",
-                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2008_storage)dyn_storage)"
+                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2010_storage)dyn_storage)"
               }
             ]
           },
           "t_uint256": {
             "label": "uint256"
           },
-          "t_mapping(t_address,t_array(t_struct(VestingInfo)2008_storage)dyn_storage)": {
+          "t_mapping(t_address,t_array(t_struct(VestingInfo)2010_storage)dyn_storage)": {
             "label": "mapping(address => struct Vesting.VestingInfo[])"
           },
           "t_address": {
             "label": "address"
           },
-          "t_array(t_struct(VestingInfo)2008_storage)dyn_storage": {
+          "t_array(t_struct(VestingInfo)2010_storage)dyn_storage": {
             "label": "struct Vesting.VestingInfo[]"
           },
-          "t_struct(VestingInfo)2008_storage": {
+          "t_struct(VestingInfo)2010_storage": {
             "label": "struct Vesting.VestingInfo",
             "members": [
               {
@@ -402,9 +215,9 @@
         }
       }
     },
-    "624d009eff96345ae622520225d23127291222aaf18e90d830d50a0e49b5b521": {
+    "a34184fa9714ebfaa7b6b0226c25e884477d7fc6e7c5cd9f4fad75f7371da6dd": {
       "address": "0xfB1e8f4d1BB0d19A075C76F8952cfD1307821375",
-      "txHash": "0x497a996ea67dce9109e500b5e7e5f53c2e583179f5543840992c6770b2ce24ee",
+      "txHash": "0x8e410eb1478db9260d1f483a71c8a61d7d07fc263b7c762b8eff402dc95b52d0",
       "layout": {
         "storage": [
           {
@@ -476,7 +289,7 @@
           {
             "contract": "CrybCrowdsale",
             "label": "vestingState",
-            "type": "t_struct(State)2019_storage",
+            "type": "t_struct(State)2021_storage",
             "src": "contracts/CrybCrowdsale.sol:17"
           },
           {
@@ -529,7 +342,7 @@
           }
         ],
         "types": {
-          "t_struct(State)2019_storage": {
+          "t_struct(State)2021_storage": {
             "label": "struct Vesting.State",
             "members": [
               {
@@ -542,23 +355,407 @@
               },
               {
                 "label": "vestingInfo",
-                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2008_storage)dyn_storage)"
+                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2010_storage)dyn_storage)"
               }
             ]
           },
           "t_uint256": {
             "label": "uint256"
           },
-          "t_mapping(t_address,t_array(t_struct(VestingInfo)2008_storage)dyn_storage)": {
+          "t_mapping(t_address,t_array(t_struct(VestingInfo)2010_storage)dyn_storage)": {
             "label": "mapping(address => struct Vesting.VestingInfo[])"
           },
           "t_address": {
             "label": "address"
           },
-          "t_array(t_struct(VestingInfo)2008_storage)dyn_storage": {
+          "t_array(t_struct(VestingInfo)2010_storage)dyn_storage": {
             "label": "struct Vesting.VestingInfo[]"
           },
-          "t_struct(VestingInfo)2008_storage": {
+          "t_struct(VestingInfo)2010_storage": {
+            "label": "struct Vesting.VestingInfo",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "totalClaimed",
+                "type": "t_uint256"
+              },
+              {
+                "label": "periodClaimed",
+                "type": "t_uint256"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_contract(IERC20Upgradeable)967": {
+            "label": "contract IERC20Upgradeable"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "f50a56e54ee7e313355002c14ead911fc94a843350cfb3196da6266b8a4954de": {
+      "address": "0xee2e3998CBE49B1DB9a626e2249CdB642b8b126E",
+      "txHash": "0xd7bc2f2bcf068a7dab6479b2d837069d9f2722d9fd221af4fef42f6b85e6f20b",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:215"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:81"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:68"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "_paused",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:97"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "vestingState",
+            "type": "t_struct(State)2021_storage",
+            "src": "contracts/CrybCrowdsale.sol:17"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "token",
+            "type": "t_contract(IERC20Upgradeable)967",
+            "src": "contracts/CrybCrowdsale.sol:18"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "treasury",
+            "type": "t_address",
+            "src": "contracts/CrybCrowdsale.sol:19"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "rate",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:21"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "totalRaised",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:22"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "totalSold",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:23"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "startTime",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:26"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "endTime",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:27"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "availableForSale",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:28"
+          }
+        ],
+        "types": {
+          "t_struct(State)2021_storage": {
+            "label": "struct Vesting.State",
+            "members": [
+              {
+                "label": "vestingDuration",
+                "type": "t_uint256"
+              },
+              {
+                "label": "cliff",
+                "type": "t_uint256"
+              },
+              {
+                "label": "vestingInfo",
+                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2010_storage)dyn_storage)"
+              }
+            ]
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_array(t_struct(VestingInfo)2010_storage)dyn_storage)": {
+            "label": "mapping(address => struct Vesting.VestingInfo[])"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_struct(VestingInfo)2010_storage)dyn_storage": {
+            "label": "struct Vesting.VestingInfo[]"
+          },
+          "t_struct(VestingInfo)2010_storage": {
+            "label": "struct Vesting.VestingInfo",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "totalClaimed",
+                "type": "t_uint256"
+              },
+              {
+                "label": "periodClaimed",
+                "type": "t_uint256"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_contract(IERC20Upgradeable)967": {
+            "label": "contract IERC20Upgradeable"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "6387454536a84936d7cf4b3b0ef7c0d9596a18e08498b18ceb82c82571dfb453": {
+      "address": "0x7CE59952D1d746689351EfBDb0cD875905327D7a",
+      "txHash": "0xf73f19a66f98f23818c6509966a1787ddc039496fdc3bf4d7d869b13f6366c5b",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:215"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:81"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:68"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "_paused",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:97"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "vestingState",
+            "type": "t_struct(State)2031_storage",
+            "src": "contracts/CrybCrowdsale.sol:19"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "token",
+            "type": "t_contract(IERC20Upgradeable)967",
+            "src": "contracts/CrybCrowdsale.sol:20"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "treasury",
+            "type": "t_address",
+            "src": "contracts/CrybCrowdsale.sol:21"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "rate",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:23"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "totalRaised",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:24"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "totalSold",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:25"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "startTime",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:28"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "endTime",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:29"
+          },
+          {
+            "contract": "CrybCrowdsale",
+            "label": "availableForSale",
+            "type": "t_uint256",
+            "src": "contracts/CrybCrowdsale.sol:30"
+          }
+        ],
+        "types": {
+          "t_struct(State)2031_storage": {
+            "label": "struct Vesting.State",
+            "members": [
+              {
+                "label": "vestingDuration",
+                "type": "t_uint256"
+              },
+              {
+                "label": "cliff",
+                "type": "t_uint256"
+              },
+              {
+                "label": "vestingInfo",
+                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2020_storage)dyn_storage)"
+              }
+            ]
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_array(t_struct(VestingInfo)2020_storage)dyn_storage)": {
+            "label": "mapping(address => struct Vesting.VestingInfo[])"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_struct(VestingInfo)2020_storage)dyn_storage": {
+            "label": "struct Vesting.VestingInfo[]"
+          },
+          "t_struct(VestingInfo)2020_storage": {
             "label": "struct Vesting.VestingInfo",
             "members": [
               {
