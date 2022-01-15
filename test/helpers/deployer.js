@@ -30,10 +30,6 @@ const deployCrybCrowdsale = async (
     treasury.address
   )
 
-  const opts = {
-    unsafeAllow: ['external-library-linking']
-  }
-
   // deploy vesting
   const Vesting = await Contract('Vesting')
   const vesting = await Vesting.deploy()
@@ -44,6 +40,11 @@ const deployCrybCrowdsale = async (
     },
     unsafeAllowLinkedLibraries: true
   })
+
+  const opts = {
+    kind: 'uups',
+    unsafeAllow: ['external-library-linking'],
+  }
 
   const crybCrowdsale = await upgrades.deployProxy(CrybCrowdsale, [
     crybToken.address,
