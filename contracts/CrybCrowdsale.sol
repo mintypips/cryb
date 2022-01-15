@@ -137,16 +137,19 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     return vestingState.getVestingInfo(beneficiary, index);
   }
 
+  function getTokenReleaseInfo(address beneficiary, uint256 index) public view returns (uint256, uint256) {
+    return vestingState.getTokenReleaseInfo(beneficiary, index);
+  }
+
   // allow users claim vested tokens
   function release(uint256 index) public whenNotPaused {
-    uint256 periodToVest;
-    uint256 amountToVest;
-    (periodToVest, amountToVest) = vestingState.getTokenReleaseInfo(_msgSender(), index);
-
     uint256 vestedAmount = vestingState.release(_msgSender(), index);
-    token.safeTransfer(_msgSender(), vestedAmount);
 
-    emit Claimed(_msgSender(), vestedAmount);
+    if(vestedAmount > 0) {
+      token.safeTransfer(_msgSender(), vestedAmount);
+
+      emit Claimed(_msgSender(), vestedAmount);
+    }
   }
 
   // helper to release multiple vesting position in one go

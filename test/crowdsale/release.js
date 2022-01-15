@@ -121,4 +121,26 @@ describe('CrybCrowdsale: release', () => {
     // on day 15 all position are fully vested
     expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 500))
   })
+
+  it.only('should emit Claimed', async () => {
+    await moveToStartTime()
+    // total amount ready to be vested is 300
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
+    const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
+
+    // vesting duration is 10 days
+    for (let i = 1; i <= 10; i++) {
+      // move one day from the vesting start time
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+      await expect(
+        crybCrowdsale.connect(participants[0]).release(0)
+      )
+      .to
+      .emit(crybCrowdsale, 'Claimed')
+      .withArgs(
+        participants[0].address,
+        toBase(30),
+      )
+    }
+  })
 })

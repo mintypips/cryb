@@ -52,13 +52,13 @@
       "kind": "uups"
     },
     {
-      "address": "0x88397077cA8F64933c0312fa239536FA23cd2e8F",
-      "txHash": "0x65ae045dcc8506db4844f335df94f063ce2a5834b7daba01e045de4c9821ebaf",
+      "address": "0xfB1e8f4d1BB0d19A075C76F8952cfD1307821375",
+      "txHash": "0xa7d43e1a2c930d8c6f6c1b382f01c21acc0e098f420472c097a0910e76d3cd87",
       "kind": "uups"
     },
     {
-      "address": "0xfB1e8f4d1BB0d19A075C76F8952cfD1307821375",
-      "txHash": "0xa7d43e1a2c930d8c6f6c1b382f01c21acc0e098f420472c097a0910e76d3cd87",
+      "address": "0x88397077cA8F64933c0312fa239536FA23cd2e8F",
+      "txHash": "0x65ae045dcc8506db4844f335df94f063ce2a5834b7daba01e045de4c9821ebaf",
       "kind": "uups"
     }
   ],
@@ -1983,9 +1983,9 @@
         }
       }
     },
-    "afd27d24ad5be02aab5e2a32df63cd3f3ac6c136383c81cec2aba0dc32151d40": {
-      "address": "0x7CE59952D1d746689351EfBDb0cD875905327D7a",
-      "txHash": "0x35d9f032060e18e8cb965c617850c061c202dcb7e3b43fa065dcc16c1ce29dbb",
+    "6f65901527b4eaa54abbef426d8fbaa9655618dad1f77272e6d8f4bdaf3424e2": {
+      "address": "0x308EEdc1C6f037fDC9B545Ebbe3615675692b0F4",
+      "txHash": "0xf1c6d4a390ca3e59808b8f77d891d5390f44d50836f2f43ae600cc8e7e120c0f",
       "layout": {
         "storage": [
           {
@@ -2175,9 +2175,9 @@
         }
       }
     },
-    "6f65901527b4eaa54abbef426d8fbaa9655618dad1f77272e6d8f4bdaf3424e2": {
-      "address": "0x308EEdc1C6f037fDC9B545Ebbe3615675692b0F4",
-      "txHash": "0xf1c6d4a390ca3e59808b8f77d891d5390f44d50836f2f43ae600cc8e7e120c0f",
+    "5abba0c9f8dcb367d36e11faa452d5f263840c0e3767a0b32d631bd5b7a6b523": {
+      "address": "0x7CE59952D1d746689351EfBDb0cD875905327D7a",
+      "txHash": "0xcb19411fd8f5be8068c453fa491f1e62bfb4eaca8abe6e240aa8571a8c80e631",
       "layout": {
         "storage": [
           {
@@ -2249,7 +2249,7 @@
           {
             "contract": "CrybCrowdsale",
             "label": "vestingState",
-            "type": "t_struct(State)2067_storage",
+            "type": "t_struct(State)2073_storage",
             "src": "contracts/CrybCrowdsale.sol:19"
           },
           {
@@ -2302,7 +2302,7 @@
           }
         ],
         "types": {
-          "t_struct(State)2067_storage": {
+          "t_struct(State)2073_storage": {
             "label": "struct Vesting.State",
             "members": [
               {
@@ -2315,23 +2315,23 @@
               },
               {
                 "label": "vestingInfo",
-                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2056_storage)dyn_storage)"
+                "type": "t_mapping(t_address,t_array(t_struct(VestingInfo)2062_storage)dyn_storage)"
               }
             ]
           },
           "t_uint256": {
             "label": "uint256"
           },
-          "t_mapping(t_address,t_array(t_struct(VestingInfo)2056_storage)dyn_storage)": {
+          "t_mapping(t_address,t_array(t_struct(VestingInfo)2062_storage)dyn_storage)": {
             "label": "mapping(address => struct Vesting.VestingInfo[])"
           },
           "t_address": {
             "label": "address"
           },
-          "t_array(t_struct(VestingInfo)2056_storage)dyn_storage": {
+          "t_array(t_struct(VestingInfo)2062_storage)dyn_storage": {
             "label": "struct Vesting.VestingInfo[]"
           },
-          "t_struct(VestingInfo)2056_storage": {
+          "t_struct(VestingInfo)2062_storage": {
             "label": "struct Vesting.VestingInfo",
             "members": [
               {
