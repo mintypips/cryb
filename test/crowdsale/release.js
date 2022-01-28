@@ -45,7 +45,7 @@ describe('CrybCrowdsale: release', () => {
   it('should allow user linearly release vested tokens', async () => {
     await moveToPresaleStartTime()
     // total amount ready to be vested is 300
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(30)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
     const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
 
     // vesting duration is 10 days
@@ -70,11 +70,11 @@ describe('CrybCrowdsale: release', () => {
     await moveToPresaleStartTime()
 
     // total amount ready to be vested is 300
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(30)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
 
     // 5 days later the same user buys more tokens thus a new vesting position is created
     await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(startTime)))))
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(50)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(50)})
 
     // from vesting day and for the next 10 days all vested positions will be released
     for (let i=1; i < 11; i++) {
@@ -92,11 +92,11 @@ describe('CrybCrowdsale: release', () => {
   it('should support release vested position for multiple users', async () => {
     await moveToPresaleStartTime()
     // total amount ready to be vested is 300
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(30)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
 
     // 5 days later the another user buys tokens
     await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(startTime)))))
-    await crybCrowdsale.connect(participants[1]).preSale({value: toBase(50)})
+    await crybCrowdsale.connect(participants[1]).buy({value: toBase(50)})
 
     // from vesting day and for the next 10 days all vested positions for each user will be released
     for (let i=1; i < 11; i++) {
@@ -170,7 +170,7 @@ describe('CrybCrowdsale: release', () => {
 
     // 5 days later the same user buys more tokens thus a new vesting position is created
     await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(startTime)))))
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(50)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(50)})
 
     // from vesting day and for the next 10 days all vested positions the user will be released
     for (let i=1; i < 11; i++) {
@@ -189,7 +189,7 @@ describe('CrybCrowdsale: release', () => {
   it('should emit Claimed', async () => {
     await moveToPresaleStartTime()
     // total amount ready to be vested is 300
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(30)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(30)})
     const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
 
     // vesting duration is 10 days

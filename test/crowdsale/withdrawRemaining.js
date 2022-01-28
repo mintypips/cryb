@@ -50,8 +50,8 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
   it('should send the unsold tokens to the treasury account', async () => {
     await moveToPresaleStartTime()
 
-    await crybCrowdsale.connect(participants[0]).preSale({value: toBase(10)})
-    await crybCrowdsale.connect(participants[1]).preSale({value: toBase(20)})
+    await crybCrowdsale.connect(participants[0]).buy({value: toBase(10)})
+    await crybCrowdsale.connect(participants[1]).buy({value: toBase(20)})
 
     // 300 tokens were sold out of the 500 available; thus 200 unsold token will be sent to the treasury
     await crybCrowdsale.connect(owner).withdrawRemaining()

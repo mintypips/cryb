@@ -125,31 +125,25 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     }
   }
 
-  function _buy() private returns(uint256) {
+  function buy() external payable nonReentrant whenNotPaused {
     require(msg.value > 0, "cannot accept 0");
+    require(block.timestamp >= startTime, "presale not started");
+    require(block.timestamp < endTime, "presale ended");
 
     uint256 tokenReceivable = msg.value * rate;
     totalRaised += msg.value;
     totalSold += tokenReceivable;
     require(totalSold <= availableForSale, "sold out");
 
-    sendFunds();
-
-    emit Buy(_msgSender(), msg.value, tokenReceivable);
-
-    return tokenReceivable;
-  }
-
-  function preSale() external payable nonReentrant whenNotPaused {
-    require(block.timestamp >= startTime, "presale not started");
-    require(block.timestamp < endTime, "presale ended");
-
-    uint256 tokenReceivable = _buy();
     userAmount[_msgSender()] += tokenReceivable;
     require(userAmount[_msgSender()] <= maxAllocation, "max allocation violation");
 
+    sendFunds();
+
     // vest the tokenReceivable
     vestingState.addBeneficiary(_msgSender(), tokenReceivable);
+
+    emit Buy(_msgSender(), msg.value, tokenReceivable);
   }
 
   function withdrawRemaining() external onlyOwner {
