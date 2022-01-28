@@ -5,7 +5,7 @@ const {endOfDay, addDays, fromSolTime} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
 const {setNextBlockTimestamp} = require('../helpers/evm')
 
-describe.only('CrybCrowdsale: publicSale', () => {
+describe('CrybCrowdsale: publicSale', () => {
   let crybCrowdsale
   let crybToken
   let startTime
@@ -145,7 +145,7 @@ describe.only('CrybCrowdsale: publicSale', () => {
 
   it('should transfer the tokens to the buyer', async () => {
     await moveToPublicStartTime()
-    
+
     let balanceBefore = await crybToken.balanceOf(participants[0].address)
     await crybCrowdsale.connect(participants[0]).publicSale({value: toBase(30)})
     let balanceAfter = await crybToken.balanceOf(participants[0].address)
@@ -162,6 +162,21 @@ describe.only('CrybCrowdsale: publicSale', () => {
     await crybCrowdsale.connect(participants[1]).publicSale({value: toBase(40)})
     balanceAfter = await crybToken.balanceOf(participants[1].address)
     expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(400))
+  })
+
+  it('should emit Buy event', async () => {
+    await moveToPublicStartTime()
+
+    await expect(
+      crybCrowdsale.connect(participants[0]).publicSale({value: toBase(30)})
+    )
+    .to
+    .emit(crybCrowdsale, 'Buy')
+    .withArgs(
+      participants[0].address,
+      toBase(30),
+      toBase(300),
+    )
   })
 
   // it('should create a new vesting position for the given users', async () => {
@@ -231,19 +246,4 @@ describe.only('CrybCrowdsale: publicSale', () => {
   //   let vestingCount1 = await crybCrowdsale.vestingCount(participants[1].address)
   //   expect(vestingCount1).to.equal(1)
   // })
-
-  it('should emit Buy event', async () => {
-    await moveToPublicStartTime()
-
-    await expect(
-      crybCrowdsale.connect(participants[0]).publicSale({value: toBase(30)})
-    )
-    .to
-    .emit(crybCrowdsale, 'Buy')
-    .withArgs(
-      participants[0].address,
-      toBase(30),
-      toBase(300),
-    )
-  })
 })

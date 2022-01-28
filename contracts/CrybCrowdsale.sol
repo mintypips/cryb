@@ -144,7 +144,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
 
   function preSale() external payable nonReentrant whenNotPaused {
     require(block.timestamp >= startTime[0], "presale not started");
-    require(block.timestamp < endTime[1], "presale ended");
+    require(block.timestamp < endTime[0], "presale ended");
 
     uint256 tokenReceivable = _buy();
     userAmount[_msgSender()] += tokenReceivable;

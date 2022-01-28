@@ -91,8 +91,8 @@ These values will be define whether we're in the pre-sale or public sale phase. 
 
 ```
   function setParams(
-    uint256 _startTime,
-    uint256 _endTime,
+    uint256[2] _startTime, // 0. presale 1. publisale
+    uint256[2] _endTime, // 0. presale 1. publisale
     uint256 _rate,
     uint256 _availableForSale,
     uint256 _maxAllocation
