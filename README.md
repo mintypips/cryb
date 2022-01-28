@@ -64,3 +64,29 @@ MaxValue = remainingTokens / rate
 ```
 
 - The `CrybCrowdsale` contract and the owner that has the initial total supply of CRYB should be excluded from the taxation imposed on all CRYB transfers???
+
+Rate Calculation
+===
+
+`rate = 1 / price per token in ETH`
+
+e.g. 
+
+price per token 0.1 ETH so rate is 1/0.1=10
+
+Presale -> Public Sale
+===
+
+The smart contract is based on the following parameters:
+
+- `startTime`
+- `endTime`
+- `rate`
+- `availableForSale`
+- `maxAllocation`
+
+These values will be define whether we're in the pre-sale or public sale phase.
+
+**Presale**
+
+- `rate`

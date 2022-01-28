@@ -21,6 +21,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   address public treasury;
   // How many token units a buyer gets per wei
   uint256 public rate;
+  uint256 public maxAllocation;
   uint256 public totalRaised;
   uint256 public totalSold;
 
@@ -29,7 +30,10 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   uint256 public endTime;
   uint256 public availableForSale;
 
+  mapping (address => uint256) public userAmount;
+
   event RateChanged(uint256 oldRate, uint256 newRate);
+  event MaxAllocationChanged(uint256 oldMaxAllocation, uint256 newMaxAllocation);
   event Buy(address indexed buyer, uint256 amount, uint256 tokenReceivable);
   event Claimed(address indexed buyer, uint256 vestedAmount);
 
@@ -37,6 +41,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     IERC20Upgradeable _token,
     address _treasury,
     uint256 _rate,
+    uint256 _maxAllocation,
     uint256 _startTime,
     uint256 _endTime,
     uint256 _availableForSale,
@@ -49,9 +54,11 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
 
     token = _token;
     treasury = _treasury;
-    availableForSale = _availableForSale;
+    
     
     setRate(_rate);
+    setAvailableForSale(_availableForSale);
+    setMaxAlloaction(_maxAllocation);
     setTs(_startTime, _endTime);
 
     vestingState.initialize(
@@ -72,9 +79,31 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   /// _authorizeUpgrade with the onlyOwner modifier.
   function _authorizeUpgrade(address) internal override onlyOwner {}
 
+  function setParams(
+    uint256 _startTime,
+    uint256 _endTime,
+    uint256 _rate,
+    uint256 _availableForSale,
+    uint256 _maxAllocation
+  ) public onlyOwner {
+    setTs(_startTime, _endTime);
+    setRate(_rate);
+    setAvailableForSale(_availableForSale);
+    setMaxAlloaction(_maxAllocation);
+  }
+
   function setRate(uint256 _rate) public onlyOwner {
     emit RateChanged(rate, _rate);
     rate = _rate;
+  }
+
+  function setMaxAlloaction(uint256 _maxAllocation) public onlyOwner {
+    emit MaxAllocationChanged(maxAllocation, _maxAllocation);
+    maxAllocation = _maxAllocation;
+  }
+
+  function setAvailableForSale(uint256 _availableForSale) public onlyOwner {
+    availableForSale = _availableForSale;
   }
 
   function setTs(uint256 _startTime, uint256 _endTime) public onlyOwner {
@@ -99,10 +128,13 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     require(block.timestamp < endTime, "sale ended");
 
     uint256 tokenReceivable = msg.value * rate;
-    require(totalSold + tokenReceivable <= availableForSale, "sold out");
-    
     totalRaised += msg.value;
+    
     totalSold += tokenReceivable;
+    require(totalSold <= availableForSale, "sold out");
+    
+    userAmount[_msgSender()] += tokenReceivable;
+    require(userAmount[_msgSender()] <= maxAllocation, "max allocation violation");
 
     processPurchase(tokenReceivable);
     sendFunds();
