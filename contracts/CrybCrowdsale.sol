@@ -25,9 +25,8 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   uint256 public totalRaised;
   uint256 public totalSold;
 
-  // start and end timestamps
-  uint256[2] public startTime;
-  uint256[2] public endTime;
+  uint256 public startTime;
+  uint256 public endTime;
 
   uint256 public availableForSale;
 
@@ -44,8 +43,9 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     uint256 _rate,
     uint256 _maxAllocation,
     uint256 _availableForSale,
-    uint256[2] memory _startTime,
-    uint256[2] memory _endTime,
+    uint256 _startTime,
+    uint256 _endTime,
+    uint256 _vestingStartDate,
     uint256 _vestingDuration,
     uint256 _cliff
   ) public initializer {
@@ -62,6 +62,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     setTs(_startTime, _endTime);
 
     vestingState.initialize(
+      _vestingStartDate,
       _vestingDuration,
       _cliff
     );
@@ -80,8 +81,8 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   function _authorizeUpgrade(address) internal override onlyOwner {}
 
   function setParams(
-    uint256[2] memory _startTime,
-    uint256[2] memory _endTime,
+    uint256 _startTime,
+    uint256 _endTime,
     uint256 _rate,
     uint256 _availableForSale,
     uint256 _maxAllocation
@@ -107,11 +108,10 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   }
 
   function setTs(
-    uint256[2] memory _startTime,
-    uint256[2] memory _endTime
+    uint256 _startTime,
+    uint256 _endTime
   ) public onlyOwner {
-    require(_startTime[0] < _endTime[0], "presale start > endTime");
-    require(_startTime[1] < _endTime[1], "public sale start > endTime");
+    require(_startTime < _endTime, "presale start > endTime");
 
     startTime = _startTime;
     endTime = _endTime;
@@ -123,7 +123,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   ) external onlyOwner {
     for (uint256 i = 0; i < privInvestors.length; i++) {
       // presale startime is also the start time for the whitelisted user vested positions
-      vestingState.addBeneficiary(privInvestors[i], startTime[0], amounts[i]);
+      vestingState.addBeneficiary(privInvestors[i], amounts[i]);
     }
   }
 
@@ -143,24 +143,15 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
   }
 
   function preSale() external payable nonReentrant whenNotPaused {
-    require(block.timestamp >= startTime[0], "presale not started");
-    require(block.timestamp < endTime[0], "presale ended");
+    require(block.timestamp >= startTime, "presale not started");
+    require(block.timestamp < endTime, "presale ended");
 
     uint256 tokenReceivable = _buy();
     userAmount[_msgSender()] += tokenReceivable;
     require(userAmount[_msgSender()] <= maxAllocation, "max allocation violation");
 
     // vest the tokenReceivable
-    vestingState.addBeneficiary(_msgSender(), block.timestamp, tokenReceivable);
-  }
-
-  function publicSale() external payable nonReentrant whenNotPaused {
-    require(block.timestamp >= startTime[1], "public sale not started");
-    require(block.timestamp < endTime[1], "public sale ended");
-
-    uint256 tokenReceivable = _buy();
-    // transfer the tokens to the user
-    token.safeTransfer(_msgSender(), tokenReceivable);
+    vestingState.addBeneficiary(_msgSender(), tokenReceivable);
   }
 
   function withdrawRemaining() external onlyOwner {

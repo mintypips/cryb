@@ -6,10 +6,10 @@ library Vesting {
     uint256 amount;
     uint256 totalClaimed;
     uint256 periodClaimed;
-    uint256 startTime;
   }
 
   struct State {
+    uint256 vestingStartDate;
     uint256 vestingDuration;
     uint256 cliff;
 
@@ -18,9 +18,11 @@ library Vesting {
 
   function initialize(
     State storage self,
+    uint256 vestingStartDate,
     uint256 vestingDuration,
     uint256 cliff  
   ) public {
+    self.vestingStartDate = vestingStartDate;
     self.vestingDuration = vestingDuration;
     self.cliff = cliff;
   }
@@ -32,14 +34,12 @@ library Vesting {
   function addBeneficiary(
     State storage self,
     address beneficiary,
-    uint256 startTime,
     uint256 amount
   ) public {
     require(beneficiary != address(0), "Beneficiary cannot be zero address");
     
     self.vestingInfo[beneficiary].push(VestingInfo({
       amount: amount,
-      startTime: startTime,
       totalClaimed: 0,
       periodClaimed: 0
     }));
@@ -97,7 +97,7 @@ library Vesting {
     }
 
     uint256 vestingDuration = getVestingDuration(self);
-    uint256 elapsedPeriod = block.timestamp - vestingInfo.startTime;
+    uint256 elapsedPeriod = block.timestamp - self.vestingStartDate;
     uint256 periodToVest = elapsedPeriod - vestingInfo.periodClaimed;
 
     // If over vesting duration, all tokens vested
