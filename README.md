@@ -72,7 +72,9 @@ Rate Calculation
 
 e.g. 
 
-price per token 0.1 ETH so rate is 1/0.1=10
+price per token 0.1 ETH so rate is 1/0.1=10. 
+
+This rate suggests that for each ETH we send it we will receive 10 tokens in exchange
 
 Presale -> Public Sale
 ===
@@ -85,8 +87,24 @@ The smart contract is based on the following parameters:
 - `availableForSale`
 - `maxAllocation`
 
-These values will be define whether we're in the pre-sale or public sale phase.
+These values will be define whether we're in the pre-sale or public sale phase. We would need to change those params by calling
+
+```
+  function setParams(
+    uint256 _startTime,
+    uint256 _endTime,
+    uint256 _rate,
+    uint256 _availableForSale,
+    uint256 _maxAllocation
+  ) public onlyOwner
+```
+
+During the deployment we set the params for the presale via the constructor. After the end of the pre-sale we call this method setting the new params.
 
 **Presale**
+- `availableForSale` 66M tokens
+- `rate` the price is $0.1 which at the current price of ETH ($2,500) will be 0.00004ETH and thus the rate is 1/0.00004 = 25,000
+- `maxAllocation` is 10 ETH, the rate is 25,000 thus the max allocation of tokens is 250,000 tokens
 
-- `rate`
+**Public Sale**
+- `availableForSale` 66M (from pre-sale) + available tokens for public sale

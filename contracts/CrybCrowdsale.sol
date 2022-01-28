@@ -42,9 +42,9 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     address _treasury,
     uint256 _rate,
     uint256 _maxAllocation,
+    uint256 _availableForSale,
     uint256 _startTime,
     uint256 _endTime,
-    uint256 _availableForSale,
     uint256 _vestingDuration,
     uint256 _cliff
   ) public initializer {
@@ -58,7 +58,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     
     setRate(_rate);
     setAvailableForSale(_availableForSale);
-    setMaxAlloaction(_maxAllocation);
+    setMaxAllocation(_maxAllocation);
     setTs(_startTime, _endTime);
 
     vestingState.initialize(
@@ -89,7 +89,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     setTs(_startTime, _endTime);
     setRate(_rate);
     setAvailableForSale(_availableForSale);
-    setMaxAlloaction(_maxAllocation);
+    setMaxAllocation(_maxAllocation);
   }
 
   function setRate(uint256 _rate) public onlyOwner {
@@ -97,7 +97,7 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     rate = _rate;
   }
 
-  function setMaxAlloaction(uint256 _maxAllocation) public onlyOwner {
+  function setMaxAllocation(uint256 _maxAllocation) public onlyOwner {
     emit MaxAllocationChanged(maxAllocation, _maxAllocation);
     maxAllocation = _maxAllocation;
   }
@@ -122,24 +122,37 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     }
   }
 
-  function buy() external payable nonReentrant whenNotPaused {
+  function _buy() private returns(uint256) {
     require(msg.value > 0, "cannot accept 0");
-    require(block.timestamp >= startTime, "sale not started");
-    require(block.timestamp < endTime, "sale ended");
 
     uint256 tokenReceivable = msg.value * rate;
     totalRaised += msg.value;
-    
     totalSold += tokenReceivable;
     require(totalSold <= availableForSale, "sold out");
-    
-    userAmount[_msgSender()] += tokenReceivable;
-    require(userAmount[_msgSender()] <= maxAllocation, "max allocation violation");
 
-    processPurchase(tokenReceivable);
     sendFunds();
 
     emit Buy(_msgSender(), msg.value, tokenReceivable);
+
+    return tokenReceivable;
+  }
+
+  function preSale() external payable nonReentrant whenNotPaused {
+    require(block.timestamp >= startTime, "sale not started");
+    require(block.timestamp < endTime, "sale ended");
+
+    uint256 tokenReceivable = _buy();
+    userAmount[_msgSender()] += tokenReceivable;
+    require(userAmount[_msgSender()] <= maxAllocation, "max allocation violation");
+  }
+
+
+  function publicSale() external payable nonReentrant whenNotPaused {
+    require(block.timestamp >= startTime, "sale not started");
+    require(block.timestamp < endTime, "sale ended");
+
+    uint256 tokenReceivable = _buy();
+    processPurchase(tokenReceivable);
   }
 
   function processPurchase(uint256 tokenReceivable) private {
