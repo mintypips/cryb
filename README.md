@@ -23,7 +23,9 @@ Create the `.config.json` file in the root directory. A sample of the file is be
     "rate": "100", // price per token 0.01 and thus rate = 1 / 0.01 = 100
     "startTime": "1642254362", // start time of the sale in epoch (secs not ms)
     "endTime": "1642772762", // // end time of the sale in epoch (secs not ms)
+    "maxAllocation": "", // max number of tokens each user can purchase
     "availebleForSale": "100000", // token has 18 decimals, we don't need to include the decimals here; this is 100K
+    "vestingStartDate": "", // the date when vesting starts
     "vestingDuration": "864000", // duration of the vesting position in seconds
     "cliff": "0", // cliff date in unix epoch
   },
@@ -76,32 +78,9 @@ price per token 0.1 ETH so rate is 1/0.1=10.
 
 This rate suggests that for each ETH we send it we will receive 10 tokens in exchange
 
-Presale -> Public Sale
+Presale
 ===
 
-The smart contract is based on the following parameters:
-
-- `startTime`
-- `endTime`
-- `rate`
-- `availableForSale`
-- `maxAllocation`
-
-These values will be define whether we're in the pre-sale or public sale phase. We would need to change those params by calling
-
-```
-  function setParams(
-    uint256[2] _startTime, // 0. presale 1. publisale
-    uint256[2] _endTime, // 0. presale 1. publisale
-    uint256 _rate,
-    uint256 _availableForSale,
-    uint256 _maxAllocation
-  ) public onlyOwner
-```
-
-During the deployment we set the params for the presale via the constructor. After the end of the pre-sale we call this method setting the new params.
-
-**Presale**
 - `availableForSale` 66M tokens
 - `rate` the price is $0.1 which at the current price of ETH ($2,500) will be 0.00004ETH and thus the rate is 1/0.00004 = 25,000
 - `maxAllocation` is 10 ETH, the rate is 25,000 thus the max allocation of tokens is 250,000 tokens

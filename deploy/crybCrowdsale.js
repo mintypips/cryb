@@ -5,9 +5,11 @@ const {
     crybToken,
     treasury,
     rate,
+    maxAllocation,
     startTime,
     endTime,
-    availebleForSale,
+    availableForSale,
+    vestingStartDate,
     vestingDuration,
     cliff
   }
@@ -33,9 +35,11 @@ const main = async () => {
     crybToken,
     treasury,
     rate,
+    maxAllocation,
+    availableForSale,
     startTime,
     endTime,
-    toBase(availebleForSale),
+    vestingStartDate,
     vestingDuration,
     cliff
   ]
