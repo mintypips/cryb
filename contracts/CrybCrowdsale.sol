@@ -154,7 +154,6 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     vestingState.addBeneficiary(_msgSender(), block.timestamp, tokenReceivable);
   }
 
-
   function publicSale() external payable nonReentrant whenNotPaused {
     require(block.timestamp >= startTime[1], "public sale not started");
     require(block.timestamp < endTime[1], "public sale ended");
