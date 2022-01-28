@@ -38,13 +38,11 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
     const startTime = await crybCrowdsale.startTime(1)
     await setNextBlockTimestamp(Number(startTime))
   }
-  
 
   const moveToPresaleStartTime = async () => {
     const startTime = await crybCrowdsale.startTime(0)
     await setNextBlockTimestamp(Number(startTime))
   }
-
 
   it('should be only be called by the owner', async () => {
     await expect(

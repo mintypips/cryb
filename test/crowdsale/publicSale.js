@@ -11,6 +11,7 @@ describe('CrybCrowdsale: publicSale', () => {
   let startTime
   let endTime
   let participants
+  let owner
 
   beforeEach(async () => {
     const {timestamp} = await ethers.provider.getBlock()
@@ -29,13 +30,14 @@ describe('CrybCrowdsale: publicSale', () => {
     participants = await getParticipants()
 
     // fund the crowdsale token contract
-    const owner = await getOwner()
+    owner = await getOwner()
     await crybToken.connect(owner).transfer(crybCrowdsale.address, toBase(1000))
   })
 
   const moveToPublicStartTime = async () => {
     const startTime = await crybCrowdsale.startTime(1)
     await setNextBlockTimestamp(Number(startTime))
+    await crybCrowdsale.connect(owner).setAvailableForSale(toBase('1000'))
   }
 
   const moveToPublicEndTime = async () => {
