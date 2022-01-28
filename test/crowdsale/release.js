@@ -1,7 +1,7 @@
 const {expect} = require('chai')
 const {getParticipants, getOwner} = require('../helpers/account')
 const {toBase} = require('../helpers/utils')
-const {endOfDay, addDays, fromSolTime, toSolTime} = require('../helpers/time')
+const {endOfDay, addDays, fromSolTime, toSolTime, duration} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
 const {setNextBlockTimestamp} = require('../helpers/evm')
 
@@ -10,21 +10,22 @@ describe('CrybCrowdsale: release', () => {
   let crybToken
   let startTime
   let endTime
+  let vestingStartDate
   let participants
   let owner
 
   beforeEach(async () => {
     const {timestamp} = await ethers.provider.getBlock()
     const now = new Date(fromSolTime(Number(timestamp)))
-    startTime = [endOfDay(addDays(1, now)), endOfDay(addDays(15, now))]
-    endTime = [
-      endOfDay(addDays(15, new Date(fromSolTime(startTime[0])))), 
-      endOfDay(addDays(20, new Date(fromSolTime(startTime[1]))))
-    ];
-    
+    startTime = endOfDay(addDays(1, now))
+    endTime = endOfDay(addDays(20, now))
+    vestingStartDate = endOfDay(addDays(30, now));
+
     ([crybCrowdsale, crybToken] = await deployCrybCrowdsale(
       startTime,
       endTime,
+      vestingStartDate,
+      duration.days(10),
       toBase(800),
       toBase(2000)
     ))
@@ -37,7 +38,7 @@ describe('CrybCrowdsale: release', () => {
   })
 
   const moveToPresaleStartTime = async () => {
-    const startTime = await crybCrowdsale.startTime(0)
+    const startTime = await crybCrowdsale.startTime()
     await setNextBlockTimestamp(Number(startTime))
   }
 
@@ -50,7 +51,7 @@ describe('CrybCrowdsale: release', () => {
     // vesting duration is 10 days
     for (let i = 1; i <= 10; i++) {
       // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingStartDate)))))
 
       // release
       let balanceBefore = await crybToken.balanceOf(participants[0].address)
@@ -70,61 +71,21 @@ describe('CrybCrowdsale: release', () => {
 
     // total amount ready to be vested is 300
     await crybCrowdsale.connect(participants[0]).preSale({value: toBase(30)})
-    const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
-
-    // the first 4 days users releases linearly the vested tokens from position 1
-    for (let i = 1; i <= 4; i++) {
-      // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      // release
-      let balanceBefore = await crybToken.balanceOf(participants[0].address)
-      await crybCrowdsale.connect(participants[0]).release(0)
-      let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      
-      // should get 1/10 of the total 300 tokens vested
-      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
-    }
 
     // 5 days later the same user buys more tokens thus a new vesting position is created
-    await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(vestingInfo.startTime)))))
+    await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(startTime)))))
     await crybCrowdsale.connect(participants[0]).preSale({value: toBase(50)})
 
-    // from day 6 and on user will be able to release from both vesting positions
-    for (let i=6; i <= 10; i++) {
-      // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      // release
-      let balanceBefore = await crybToken.balanceOf(participants[0].address)
-      await crybCrowdsale.connect(participants[0]).releaseAll()
-      let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      
-      if(i === 6) {
-        // should get 2/10 of the total 300 tokens because position 0 was last released on day 4
-        // vested and 1/10 from the 500 vested tokens from position 2
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(110))
-      }
-      else {
-        // should get 1/10 of the total 300 tokens vested and 1/10 from the 500 vested tokens from position 2
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(80))
-      }
-    }
-
-    // on day 10 we have fully released the tokens from position 1 and half of position 2
-    expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 250))
-
-    // from day 11 until day 15 the rest of the vesting position 2 will be released and none of the fully vested position 1
-    for (let i=11; i <= 15; i++) {
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+    // from vesting day and for the next 10 days all vested positions will be released
+    for (let i=1; i < 11; i++) {
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingStartDate)))))
 
       let balanceBefore = await crybToken.balanceOf(participants[0].address)
       await crybCrowdsale.connect(participants[0]).releaseAll()
       let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(50))
+      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(80))
     }
 
-    // on day 15 all position are fully vested
     expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 500))
   })
 
@@ -132,75 +93,29 @@ describe('CrybCrowdsale: release', () => {
     await moveToPresaleStartTime()
     // total amount ready to be vested is 300
     await crybCrowdsale.connect(participants[0]).preSale({value: toBase(30)})
-    const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
-
-    // the first 4 days users releases linearly the vested tokens from position 1
-    for (let i = 1; i <= 4; i++) {
-      // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      // release
-      let balanceBefore = await crybToken.balanceOf(participants[0].address)
-      await crybCrowdsale.connect(participants[0]).release(0)
-      let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      
-      // should get 1/10 of the total 300 tokens vested
-      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
-    }
 
     // 5 days later the another user buys tokens
-    await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(vestingInfo.startTime)))))
+    await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(startTime)))))
     await crybCrowdsale.connect(participants[1]).preSale({value: toBase(50)})
 
-    // from day 6 and on user will be able to release from both vesting positions
-    for (let i=6; i <= 10; i++) {
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+    // from vesting day and for the next 10 days all vested positions for each user will be released
+    for (let i=1; i < 11; i++) {
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingStartDate)))))
 
-      // release user 1
       let balanceBefore = await crybToken.balanceOf(participants[0].address)
       await crybCrowdsale.connect(participants[0]).releaseAll()
       let balanceAfter = await crybToken.balanceOf(participants[0].address)
+      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
 
-      if(i === 6) {
-        // should get 2/10 of the total 300 tokens because position 0 was last released on day 4
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(60))
-      }
-      else {
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
-      }
-
-      // release user 2
       balanceBefore = await crybToken.balanceOf(participants[1].address)
       await crybCrowdsale.connect(participants[1]).releaseAll()
       balanceAfter = await crybToken.balanceOf(participants[1].address)
-      
-      if(i === 6) {
-        // slightly more that 50 in the first iteration
+
+      // due to some timing-traveling issues we have to do the following
+      if(i === 1) {
         expect(balanceAfter.sub(balanceBefore)).to.equal('50000578703703703703')
       }
-      else {
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(50))
-      }
-    }
-
-    expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300))
-    expect(await crybToken.balanceOf(participants[1].address)).to.equal('250000578703703703703')
-
-    // from day 11 until day 15 only participant 1 can release; participant 0 has released everything
-    for (let i=11; i <= 15; i++) {
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      let balanceBefore = await crybToken.balanceOf(participants[0].address)
-      await crybCrowdsale.connect(participants[0]).releaseAll()
-      let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      expect(balanceAfter.sub(balanceBefore)).to.equal(0)
-
-      balanceBefore = await crybToken.balanceOf(participants[1].address)
-      await crybCrowdsale.connect(participants[1]).releaseAll()
-      balanceAfter = await crybToken.balanceOf(participants[1].address)
-
-      if(i === 15) {
-        // for the same reason as above
+      else if(i === 10) {
         expect(balanceAfter.sub(balanceBefore)).to.equal('49999421296296296297')
       }
       else {
@@ -208,7 +123,6 @@ describe('CrybCrowdsale: release', () => {
       }
     }
 
-    // on day 15 all position 2 is fully vested and position 1 remains intact as it as fully released on day 10
     expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300))
     expect(await crybToken.balanceOf(participants[1].address)).to.equal(toBase(500))
   })
@@ -219,25 +133,20 @@ describe('CrybCrowdsale: release', () => {
       [toBase(300), toBase(500)]
     )
 
-    // whitelisted users have the same start time for vestinf
-    const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
+    // from vesting day and for the next 10 days all vested positions for each user will be released
+    for (let i=1; i < 11; i++) {
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingStartDate)))))
 
-    // from day 6 and on user will be able to release from both vesting positions
-    for (let i=1; i <= 10; i++) {
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      // release user 1
       let balanceBefore = await crybToken.balanceOf(participants[0].address)
       await crybCrowdsale.connect(participants[0]).releaseAll()
       let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      
       expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
-      
-      // release user 2
+
       balanceBefore = await crybToken.balanceOf(participants[1].address)
       await crybCrowdsale.connect(participants[1]).releaseAll()
       balanceAfter = await crybToken.balanceOf(participants[1].address)
-      
+
+      // due to some timing-traveling issues we have to do the following
       if(i === 1) {
         expect(balanceAfter.sub(balanceBefore)).to.equal('50000578703703703703')
       }
@@ -258,58 +167,19 @@ describe('CrybCrowdsale: release', () => {
       [participants[0].address],
       [toBase(300)]
     )
-    const vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
-
-    // the first 4 days users releases linearly the vested tokens from position 1
-    for (let i = 1; i <= 4; i++) {
-      // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      // release
-      let balanceBefore = await crybToken.balanceOf(participants[0].address)
-      await crybCrowdsale.connect(participants[0]).release(0)
-      let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      
-      // should get 1/10 of the total 300 tokens vested
-      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(30))
-    }
 
     // 5 days later the same user buys more tokens thus a new vesting position is created
-    await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(vestingInfo.startTime)))))
+    await setNextBlockTimestamp(toSolTime(await addDays(5, new Date(fromSolTime(startTime)))))
     await crybCrowdsale.connect(participants[0]).preSale({value: toBase(50)})
 
-    // from day 6 and on user will be able to release from both vesting positions
-    for (let i=6; i <= 10; i++) {
-      // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
-
-      // release
-      let balanceBefore = await crybToken.balanceOf(participants[0].address)
-      await crybCrowdsale.connect(participants[0]).releaseAll()
-      let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      
-      if(i === 6) {
-        // should get 2/10 of the total 300 tokens because position 0 was last released on day 4
-        // vested and 1/10 from the 500 vested tokens from position 2
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(110))
-      }
-      else {
-        // should get 1/10 of the total 300 tokens vested and 1/10 from the 500 vested tokens from position 2
-        expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(80))
-      }
-    }
-
-    // on day 10 we have fully released the tokens from position 1 and half of position 2
-    expect(await crybToken.balanceOf(participants[0].address)).to.equal(toBase(300 + 250))
-
-    // from day 11 until day 15 the rest of the vesting position 2 will be released and none of the fully vested position 1
-    for (let i=11; i <= 15; i++) {
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+    // from vesting day and for the next 10 days all vested positions the user will be released
+    for (let i=1; i < 11; i++) {
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingStartDate)))))
 
       let balanceBefore = await crybToken.balanceOf(participants[0].address)
       await crybCrowdsale.connect(participants[0]).releaseAll()
       let balanceAfter = await crybToken.balanceOf(participants[0].address)
-      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(50))
+      expect(balanceAfter.sub(balanceBefore)).to.equal(toBase(80))
     }
 
     // on day 15 all position are fully vested
@@ -325,7 +195,7 @@ describe('CrybCrowdsale: release', () => {
     // vesting duration is 10 days
     for (let i = 1; i <= 10; i++) {
       // move one day from the vesting start time
-      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingInfo.startTime)))))
+      await setNextBlockTimestamp(toSolTime(await addDays(i, new Date(fromSolTime(vestingStartDate)))))
       await expect(
         crybCrowdsale.connect(participants[0]).release(0)
       )

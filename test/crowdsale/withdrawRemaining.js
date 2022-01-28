@@ -11,20 +11,21 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
   let owner
   let startTime
   let endTime
+  let vestingStartDate
   let participants
 
   beforeEach(async () => {
     const {timestamp} = await ethers.provider.getBlock()
     const now = new Date(fromSolTime(Number(timestamp)))
     startTime = [endOfDay(addDays(1, now)), endOfDay(addDays(15, now))]
-    endTime = [
-      endOfDay(addDays(15, new Date(fromSolTime(startTime[0])))), 
-      endOfDay(addDays(20, new Date(fromSolTime(startTime[1]))))
-    ];
+    startTime = endOfDay(addDays(1, now))
+    endTime = endOfDay(addDays(20, now))
+    vestingStartDate = endOfDay(addDays(30, now));
 
     ([crybCrowdsale, crybToken] = await deployCrybCrowdsale(
       startTime,
-      endTime
+      endTime,
+      vestingStartDate
     ))
 
     owner = await getOwner()
@@ -34,13 +35,8 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
     await crybToken.connect(owner).transfer(crybCrowdsale.address, toBase(1000))
   })
 
-  const moveToPublicStartTime = async () => {
-    const startTime = await crybCrowdsale.startTime(1)
-    await setNextBlockTimestamp(Number(startTime))
-  }
-
   const moveToPresaleStartTime = async () => {
-    const startTime = await crybCrowdsale.startTime(0)
+    const startTime = await crybCrowdsale.startTime()
     await setNextBlockTimestamp(Number(startTime))
   }
 
@@ -57,14 +53,10 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
     await crybCrowdsale.connect(participants[0]).preSale({value: toBase(10)})
     await crybCrowdsale.connect(participants[1]).preSale({value: toBase(20)})
 
-    await moveToPublicStartTime()
-    await crybCrowdsale.connect(owner).setAvailableForSale(toBase('1000'))
-    await crybCrowdsale.connect(participants[2]).publicSale({value: toBase(30)})
-
-    // 600 tokens were sold out of the 1000 available; thus 400 unsold token will be sent to the treasury
+    // 300 tokens were sold out of the 500 available; thus 200 unsold token will be sent to the treasury
     await crybCrowdsale.connect(owner).withdrawRemaining()
 
     const treasury = await getTreasury()
-    expect(await crybToken.balanceOf(treasury.address)).to.equal(toBase(400))
+    expect(await crybToken.balanceOf(treasury.address)).to.equal(toBase(200))
   })
 })

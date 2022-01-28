@@ -10,20 +10,20 @@ describe('CrybCrowdsale: preSale', () => {
   let crybToken
   let startTime
   let endTime
+  let vestingStartDate
   let participants
 
   beforeEach(async () => {
     const {timestamp} = await ethers.provider.getBlock()
     const now = new Date(fromSolTime(Number(timestamp)))
-    startTime = [endOfDay(addDays(1, now)), endOfDay(addDays(15, now))]
-    endTime = [
-      endOfDay(addDays(15, new Date(fromSolTime(startTime[0])))), 
-      endOfDay(addDays(20, new Date(fromSolTime(startTime[1]))))
-    ];
+    startTime = endOfDay(addDays(1, now))
+    endTime = endOfDay(addDays(10, now))
+    vestingStartDate = endOfDay(addDays(15, now));
 
     ([crybCrowdsale, crybToken] = await deployCrybCrowdsale(
       startTime,
-      endTime
+      endTime,
+      vestingStartDate
     ))
 
     participants = await getParticipants()
@@ -34,12 +34,12 @@ describe('CrybCrowdsale: preSale', () => {
   })
 
   const moveToPresaleStartTime = async () => {
-    const startTime = await crybCrowdsale.startTime(0)
+    const startTime = await crybCrowdsale.startTime()
     await setNextBlockTimestamp(Number(startTime))
   }
 
   const moveToPresaleEndTime = async () => {
-    const endTime = await crybCrowdsale.endTime(0)
+    const endTime = await crybCrowdsale.endTime()
     await setNextBlockTimestamp(Number(endTime))
   }
 
@@ -185,8 +185,7 @@ describe('CrybCrowdsale: preSale', () => {
     let vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
     expect(vestingInfo.amount).to.equal(toBase(200))
     expect(vestingInfo.totalClaimed).to.equal(0)
-    expect(vestingInfo.periodClaimed).to.equal(0)
-    expect(vestingInfo.startTime).to.equal(timestamp);
+    expect(vestingInfo.periodClaimed).to.equal(0);
 
     ({blockNumber} = await crybCrowdsale.connect(participants[1]).preSale({value: toBase(10)}));
     ({timestamp} = await ethers.provider.getBlock(blockNumber));
@@ -194,7 +193,6 @@ describe('CrybCrowdsale: preSale', () => {
     expect(vestingInfo.amount).to.equal(toBase(100))
     expect(vestingInfo.totalClaimed).to.equal(0)
     expect(vestingInfo.periodClaimed).to.equal(0)
-    expect(vestingInfo.startTime).to.equal(timestamp)
   })
 
   it('should allow the same user have multiple vesting positions', async () => {
@@ -205,8 +203,7 @@ describe('CrybCrowdsale: preSale', () => {
     let vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 0)
     expect(vestingInfo.amount).to.equal(toBase(100))
     expect(vestingInfo.totalClaimed).to.equal(0)
-    expect(vestingInfo.periodClaimed).to.equal(0)
-    expect(vestingInfo.startTime).to.equal(timestamp);
+    expect(vestingInfo.periodClaimed).to.equal(0);
 
     // second position
     ({blockNumber} = await crybCrowdsale.connect(participants[0]).preSale({value: toBase(5)}));
@@ -214,8 +211,7 @@ describe('CrybCrowdsale: preSale', () => {
     (vestingInfo = await crybCrowdsale.getVestingInfo(participants[0].address, 1));
     expect(vestingInfo.amount).to.equal(toBase(50))
     expect(vestingInfo.totalClaimed).to.equal(0)
-    expect(vestingInfo.periodClaimed).to.equal(0)
-    expect(vestingInfo.startTime).to.equal(timestamp);
+    expect(vestingInfo.periodClaimed).to.equal(0);
 
     // third position
     ({blockNumber} = await crybCrowdsale.connect(participants[0]).preSale({value: toBase(5)}));
@@ -224,7 +220,6 @@ describe('CrybCrowdsale: preSale', () => {
     expect(vestingInfo.amount).to.equal(toBase(50))
     expect(vestingInfo.totalClaimed).to.equal(0)
     expect(vestingInfo.periodClaimed).to.equal(0)
-    expect(vestingInfo.startTime).to.equal(timestamp)
   })
 
   it('should update the vesting count for each user', async () => {
