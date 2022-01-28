@@ -195,8 +195,6 @@ contract CrybCrowdsale is Initializable, UUPSUpgradeable, OwnableUpgradeable, Re
     address recipient,
     uint256 amount
   ) external onlyOwner {
-    require(tokenToRescue != token, "cannot rescue offering token");
-
     tokenToRescue.safeTransfer(recipient, amount);
   }
 }
