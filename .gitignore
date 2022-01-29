@@ -9,6 +9,7 @@ cache
 artifacts
 
 .config.json
+.config.rinkeby.json
 reference/
 
 .openzeppelin/unknown-31337.json
