@@ -1,4 +1,5 @@
 const {expect} = require('chai')
+const { ethers } = require('ethers')
 const { getTreasury } = require('../helpers/account')
 const {deployCrybToken} = require('../helpers/deployer')
 const {toBase} = require('../helpers/utils')
@@ -87,16 +88,17 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
             })
 
             it('emits a transfer event', async () => { 
-              await expect(
-                await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
-              )
-              .to
-              .emit(token, 'Transfer')
-              .withArgs(
-                tokenOwner.address,
-                to.address,
-                toBase(amount.sub(toBase('50000000')))
-              )
+              let result = await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
+              let tx = await result.wait()
+              const treasury = await getTreasury()
+
+              expect(tx.events[0].args.from).to.equal(tokenOwner.address)
+              expect(tx.events[0].args.to).to.equal(treasury.address)
+              expect(tx.events[0].args.value).to.equal(toBase('50000000'))
+
+              expect(tx.events[1].args.from).to.equal(tokenOwner.address)
+              expect(tx.events[1].args.to).to.equal(to.address)
+              expect(tx.events[1].args.value).to.equal(amount.sub(toBase('50000000')))
             })
 
             it('emits an approval event', async () => {
