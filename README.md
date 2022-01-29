@@ -51,7 +51,7 @@ This will print the deployed contract address
 
 5. Exclude owner, treasury and crowdsale contract from being taxed. To do so, we can include all addresses we want to exclude in the `excludedAccounts` prop in the config file and then run the following command:
 
-`yarn excludeAccount:rinkeby`
+`yarn excludeAccount:mainnet`
 
 6. Fund the deployed crowdsale contract with the tokens that are available for sale
 
