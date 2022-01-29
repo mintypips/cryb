@@ -79,7 +79,6 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
               const treasury = await getTreasury()
               await token.connect(spender).transferFrom(treasury.address, to.address, amount)
 
-              expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
               expect(await token.balanceOf(spender.address)).to.be.equal(toBase('0'))
               expect(await token.balanceOf(to.address)).to.be.equal(amount.sub(toBase('50000000')))
               expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
