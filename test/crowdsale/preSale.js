@@ -29,8 +29,8 @@ describe('CrybCrowdsale: preSale', () => {
     participants = await getParticipants()
 
     // fund the crowdsale token contract
-    const owner = await getOwner()
-    await crybToken.connect(owner).transfer(crybCrowdsale.address, toBase(1000))
+    treasury = await getTreasury()
+    await crybToken.connect(treasury).transfer(crybCrowdsale.address, toBase(1000))
   })
 
   const moveToPresaleStartTime = async () => {

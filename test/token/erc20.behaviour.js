@@ -8,10 +8,12 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice, bob) => {
   let token
+  let treasury
 
   describe('total supply',  ()  => {
     beforeEach(async () => {
       token = await deployCrybToken()
+      treasury = await getTreasury()
     })
 
     it('returns the total amount of tokens', async () => {
@@ -62,8 +64,11 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
         const to = bob
 
         describe('when the spender has enough approved balance', ()  => {
-          beforeEach(async () => {
+          let treasury
+
+          beforeEach(async () => {            
             await token.connect(initialHolder).approve(spender.address, initialSupply)
+            treasury = await getTreasury()
           })
 
           describe('when the token owner has enough balance', () => {
@@ -71,46 +76,45 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
 
             it('transfers the requested amount', async () => {
               // 5% will go to the treasury
-              await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
-
-              expect(await token.balanceOf(tokenOwner.address)).to.be.equal(0)
-
               const treasury = await getTreasury()
+              await token.connect(spender).transferFrom(treasury.address, to.address, amount)
+
+              expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
               expect(await token.balanceOf(spender.address)).to.be.equal(toBase('0'))
               expect(await token.balanceOf(to.address)).to.be.equal(amount.sub(toBase('50000000')))
               expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
             })
 
             it('decreases the spender allowance', async () => {
-              await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
+              await token.connect(spender).transferFrom(treasury.address, to.address, amount)
 
-              expect(await token.allowance(tokenOwner.address, spender.address)).to.be.equal('0')
+              expect(await token.allowance(treasury.address, spender.address)).to.be.equal('0')
             })
 
-            it('emits a transfer event', async () => { 
-              let result = await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
-              let tx = await result.wait()
+            it('emits a transfer event', async () => {
               const treasury = await getTreasury()
+              let result = await token.connect(spender).transferFrom(treasury.address, to.address, amount)
+              let tx = await result.wait()
 
-              expect(tx.events[0].args.from).to.equal(tokenOwner.address)
+              expect(tx.events[0].args.from).to.equal(treasury.address)
               expect(tx.events[0].args.to).to.equal(treasury.address)
               expect(tx.events[0].args.value).to.equal(toBase('50000000'))
 
-              expect(tx.events[1].args.from).to.equal(tokenOwner.address)
+              expect(tx.events[1].args.from).to.equal(treasury.address)
               expect(tx.events[1].args.to).to.equal(to.address)
               expect(tx.events[1].args.value).to.equal(amount.sub(toBase('50000000')))
             })
 
             it('emits an approval event', async () => {
               await expect(
-                await token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
+                await token.connect(spender).transferFrom(treasury.address, to.address, amount)
               )
               .to
               .emit(token, 'Approval')
               .withArgs(
-                tokenOwner.address,
+                treasury.address,
                 spender.address,
-                await token.allowance(tokenOwner.address, spender.address),
+                await token.allowance(treasury.address, spender.address),
               )
             })
           })
@@ -119,7 +123,7 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
             const amount = initialSupply.add(toBase(1))
 
             await expect(
-              token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
+              token.connect(spender).transferFrom(treasury.address, to.address, amount)
             ).to.reverted
           })
         })
@@ -134,7 +138,7 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
 
             it('reverts', async () => {
               await expect(
-                token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
+                token.connect(spender).transferFrom(treasury.address, to.address, amount)
               ).to.revertedWith(`${errorPrefix}: transfer amount exceeds allowance`)
             })
           })
@@ -144,7 +148,7 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
 
             it('reverts', async () => {
               await expect(
-                token.connect(spender).transferFrom(tokenOwner.address, to.address, amount)
+                token.connect(spender).transferFrom(treasury.address, to.address, amount)
               ).to.reverted
             })
           })
@@ -161,7 +165,7 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
 
         it('reverts', async () => {
           await expect(
-            token.connect(spender).transferFrom(tokenOwner.address, to, amount)
+            token.connect(spender).transferFrom(treasury.address, to, amount)
           ).to.revertedWith(`${errorPrefix}: transfer to the zero address`)
         })
       })
@@ -213,10 +217,8 @@ const shouldBehaveLikeERC20Transfer =  (errorPrefix, from, to, balance, transfer
       it('transfers the requested amount', async () => {
         await transfer(token, from, to.address, amount)
 
-        expect(await token.balanceOf(from.address)).to.be.equal(0)
-
         const treasury = await getTreasury()
-        expect(await token.balanceOf(from.address)).to.be.equal(toBase('0'))
+        expect(await token.balanceOf(from.address)).to.be.equal(toBase('50000000'))
         expect(await token.balanceOf(to.address)).to.be.equal(amount.sub(toBase('50000000')))
         expect(await token.balanceOf(treasury.address)).to.be.equal(toBase('50000000'))
       })

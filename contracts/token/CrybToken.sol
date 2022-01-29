@@ -19,7 +19,7 @@ contract CrybToken is Ownable, ERC20 {
     uint256 _tax,
     address _treasury
   ) ERC20('Cryb', 'CRYB') {
-    _mint(msg.sender, 1000 * MILLION);
+    _mint(_treasury, 1000 * MILLION);
     
     setTax(_tax);
     setTreasury(_treasury);

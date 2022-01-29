@@ -63,6 +63,7 @@ const deployCrybCrowdsale = async (
 
   // exclude owner and crowdsale
   await crybToken.exclude(owner.address)
+  await crybToken.exclude(treasury.address)
   await crybToken.exclude(crybCrowdsale.address)
 
   return [crybCrowdsale, crybToken]

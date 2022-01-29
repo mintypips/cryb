@@ -1,5 +1,5 @@
 const {expect} = require('chai')
-const {getOwner, getBob, getAlice} = require('../helpers/account')
+const {getOwner, getBob, getAlice, getTreasury} = require('../helpers/account')
 const {deployCrybToken} = require('../helpers/deployer')
 const {toBase} = require('../helpers/utils')
 const {
@@ -18,7 +18,7 @@ describe('ERC20', () => {
   const initialSupply = toBase('1000000000')
 
   before(async () => {
-    initialHolder = await getOwner()
+    initialHolder = await getTreasury()
     alice = await getAlice()
     bob = await getBob()
   })
@@ -48,7 +48,7 @@ describe('ERC20', () => {
       let spender
 
       beforeEach(async () => {
-        initialHolder = await getOwner()
+        initialHolder = await getTreasury()
         alice = await getAlice()
         spender = alice
       })
@@ -133,7 +133,7 @@ describe('ERC20', () => {
       let spender
 
       beforeEach(async () => {
-        initialHolder = await getOwner()
+        initialHolder = await getTreasury()
         alice = await getAlice()
         spender = alice
       })

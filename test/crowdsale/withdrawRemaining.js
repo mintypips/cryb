@@ -32,7 +32,8 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
     participants = await getParticipants()
 
     // fund the crowdsale token contract
-    await crybToken.connect(owner).transfer(crybCrowdsale.address, toBase(1000))
+    treasury = await getTreasury()
+    await crybToken.connect(treasury).transfer(crybCrowdsale.address, toBase(1000))
   })
 
   const moveToPresaleStartTime = async () => {
@@ -57,6 +58,8 @@ describe('CrybCrowdsale: withdrawRemaining', () => {
     await crybCrowdsale.connect(owner).withdrawRemaining()
 
     const treasury = await getTreasury()
-    expect(await crybToken.balanceOf(treasury.address)).to.equal(toBase(200))
+    // 999,999,000 where already in the treasury (1B - 1000 transfered to the crowdsale)
+    // thus the new balance will be 999,999,200
+    expect(await crybToken.balanceOf(treasury.address)).to.equal(toBase(999999200))
   })
 })

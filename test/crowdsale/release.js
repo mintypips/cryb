@@ -1,5 +1,5 @@
 const {expect} = require('chai')
-const {getParticipants, getOwner} = require('../helpers/account')
+const {getParticipants, getOwner, getTreasury} = require('../helpers/account')
 const {toBase} = require('../helpers/utils')
 const {endOfDay, addDays, fromSolTime, toSolTime, duration} = require('../helpers/time')
 const {deployCrybCrowdsale} = require('../helpers/deployer')
@@ -13,6 +13,7 @@ describe('CrybCrowdsale: release', () => {
   let vestingStartDate
   let participants
   let owner
+  let treasury
 
   beforeEach(async () => {
     const {timestamp} = await ethers.provider.getBlock()
@@ -34,7 +35,8 @@ describe('CrybCrowdsale: release', () => {
       
     // fund the crowdsale token contract
     owner = await getOwner()
-    await crybToken.connect(owner).transfer(crybCrowdsale.address, toBase(1000))
+    treasury = await getTreasury()
+    await crybToken.connect(treasury).transfer(crybCrowdsale.address, toBase(1000))
   })
 
   const moveToPresaleStartTime = async () => {
