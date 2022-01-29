@@ -13,7 +13,9 @@
     "deploy:crowdsale:rinkeby": "npx hardhat run deploy/crybCrowdsale.js --network rinkeby",
     "deploy:crowdsale:mainnet": "npx hardhat run deploy/crybCrowdsale.js --network mainnet",
     "excludeAccount:rinkeby": "npx hardhat run scripts/exclude.js --network rinkeby",
-    "excludeAccount:mainnet": "npx hardhat run scripts/exclude.js --network mainnet"
+    "excludeAccount:mainnet": "npx hardhat run scripts/exclude.js --network mainnet",
+    "whitelist:rinkeby": "npx hardhat run scripts/whitelist.js --network rinkeby",
+    "whitelist:mainnet": "npx hardhat run scripts/whitelist.js --network mainnet"
   },
   "license": "MIT",
   "devDependencies": {
@@ -30,6 +32,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.2",
-    "@openzeppelin/contracts-upgradeable": "^4.4.2"
+    "@openzeppelin/contracts-upgradeable": "^4.4.2",
+    "csv-parse": "^5.0.4",
+    "rxjs": "^7.5.2"
   }
 }

@@ -13,3 +13,4 @@ artifacts
 reference/
 
 .openzeppelin/unknown-31337.json
+whitelist.csv
