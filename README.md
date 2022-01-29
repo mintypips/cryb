@@ -87,3 +87,22 @@ Presale
 
 **Public Sale**
 - `availableForSale` 66M (from pre-sale) + available tokens for public sale
+
+Whitelist
+===
+
+We need to add `whitelist.csv` to the script folder and run `yarn whitelist:mainnet`
+
+The content of the file should me like this:
+
+```
+0x01A9c9AB610e75b8Af5606Ff88318094866b9e82,6500000000000000000000
+0xA589fe81a04aA32dc473a3509bc009C53187542D,6500000000000000000000
+0x6aF5ca2c4a908Eb4d404b9acD141A1fF0dcAEA12,6500000000000000000000
+0x1C8AB0d0a117Ba9b39Db2F14Fa3061e2C2788045,6500000000000000000000
+0x7D83dB2045177cB227DB4b44229229Da643F8ceD,6500000000000000000000
+0xDF077c02D7C74b350dc86f338fe9C7a0f1E2cff6,6500000000000000000000
+```
+
+First column is the account the second is the amount of tokens that will be locked for vesting
+
