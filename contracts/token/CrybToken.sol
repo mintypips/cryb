@@ -18,7 +18,7 @@ contract CrybToken is Ownable, ERC20 {
   constructor(
     uint256 _tax,
     address _treasury
-  ) ERC20('Cryb Token', 'CRYB') {
+  ) ERC20('Cryb', 'CRYB') {
     _mint(msg.sender, 1000 * MILLION);
     
     setTax(_tax);
@@ -84,9 +84,10 @@ contract CrybToken is Ownable, ERC20 {
 
     if(taxedAmount > 0) {
       _balances[treasury] += taxedAmount;
+      emit Transfer(sender, treasury, taxedAmount);
     }
 
-    emit Transfer(sender, recipient, amount);
+    emit Transfer(sender, recipient, totalReceived);
   }
 
   function tokenRescue(

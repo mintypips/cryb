@@ -28,7 +28,7 @@ describe('ERC20', () => {
   })
 
   it('has a name', async  () => {
-    expect(await token.name()).to.equal('Cryb Token')
+    expect(await token.name()).to.equal('Cryb')
   })
 
   it('has a symbol', async () => {

@@ -95,7 +95,7 @@ const shouldBehaveLikeERC20 = (errorPrefix, initialSupply, initialHolder, alice,
               .withArgs(
                 tokenOwner.address,
                 to.address,
-                toBase('1000000000')
+                toBase(amount.sub(toBase('50000000')))
               )
             })
 
@@ -228,7 +228,7 @@ const shouldBehaveLikeERC20Transfer =  (errorPrefix, from, to, balance, transfer
         .withArgs(
           from.address,
           to.address,
-          toBase('1000000000')
+          amount.sub(toBase('50000000'))
         )
       })
     })
