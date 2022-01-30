@@ -34,6 +34,8 @@ Create the `.config.json` file in the root directory. A sample of the file is be
 }
 ```
 
+Note! `availebleForSale` is the amount available for the presale. This does not include the tokens that are already sold via the private sale.
+
 1. Deploy the CrybToken contract
 
 `yarn deploy:token:mainnet`
